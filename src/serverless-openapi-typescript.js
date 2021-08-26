@@ -4,7 +4,7 @@ const tsj = require('ts-json-schema-generator');
 const yaml = require('js-yaml');
 const fs = require('fs');
 
-class ServerlessOpenapiDocumentationModels {
+class ServerlessOpenapiTypeScript {
   constructor(serverless, options) {
     this.serverless = serverless;
     this.assertPluginOrder();
@@ -212,4 +212,4 @@ class ServerlessOpenapiDocumentationModels {
   }
 }
 
-module.exports = ServerlessOpenapiDocumentationModels;
+module.exports = ServerlessOpenapiTypeScript;
