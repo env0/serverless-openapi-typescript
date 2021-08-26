@@ -1,3 +1,3 @@
-const ServerlessOpenapiTypescript = require('./src/serverless-openapi-typescript'
+const ServerlessOpenapiTypeScript = require('./src/serverless-openapi-typescript'
 )
-module.exports = ServerlessOpenapiTypescript;
+module.exports = ServerlessOpenapiTypeScript;
