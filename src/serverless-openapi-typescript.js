@@ -37,7 +37,7 @@ class ServerlessOpenapiTypeScript {
   assertPluginOrder() {
     if (!this.serverless.pluginManager.hooks['openapi:generate:serverless']) {
       throw new Error(
-        'Please configure your serverless.plugins list so serverless-openapi-documentation-models will be listed AFTER @conqa/serverless-openapi-documentation'
+        'Please configure your serverless.plugins list so serverless-openapi-typescript will be listed AFTER @conqa/serverless-openapi-documentation'
       );
     }
   }
@@ -47,7 +47,7 @@ class ServerlessOpenapiTypeScript {
   }
 
   log(msg) {
-    this.serverless.cli.log(`[serverless-openapi-documentation-models] ${msg}`);
+    this.serverless.cli.log(`[serverless-openapi-typescript] ${msg}`);
   }
 
   async populateServerlessWithModels() {
