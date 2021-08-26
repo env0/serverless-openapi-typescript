@@ -1,6 +1,6 @@
 {
   "name": "serverless-openapi-typescript",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An extension of @conqa/serverless-openapi-documentation that also generates your OpenAPI models from TypeScript",
   "main": "index.js",
   "scripts": {
@@ -21,5 +21,6 @@
   },
   "keywords": [],
   "author": "env0",
+  "repository": "https://github.com/env0/serverless-openapi-typescript",
   "license": "MIT"
 }
