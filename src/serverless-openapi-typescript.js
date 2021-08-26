@@ -151,7 +151,7 @@ class ServerlessOpenapiTypeScript {
 
   postProcessOpenApi() {
     const outputFile = this.serverless.processedInput.options.output;
-    const openApi = yaml.load(outputFile);
+    const openApi = yaml.load(fs.readFileSync(outputFile));
     this.patchOpenApiVersion(openApi);
     this.tagMethods(openApi);
     fs.writeFileSync(outputFile, yaml.dump(openApi));
