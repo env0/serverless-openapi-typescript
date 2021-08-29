@@ -1,11 +1,25 @@
-'use strict';
-const { upperFirst, mergeWith, set, isArray, get, isEmpty } = require('lodash');
-const tsj = require('ts-json-schema-generator');
-const yaml = require('js-yaml');
-const fs = require('fs');
+import type Serverless from "serverless";
+import fs from "fs";
+import yaml from "js-yaml";
+import tsj,  {SchemaGenerator} from "ts-json-schema-generator";
+import {upperFirst, mergeWith, set, isArray, get, isEmpty } from "lodash" ;
 
-class ServerlessOpenapiTypeScript {
-  constructor(serverless, options) {
+interface Options {
+  typescriptApiPath?: string;
+  tsconfigPath?: string;
+}
+
+export default class ServerlessOpenapiTypeScript {
+  private serverless: Serverless;
+  private readonly functionsMissingDocumentation: string[];
+  private readonly disable: boolean;
+  private hooks: { [hook: string]: () => {}};
+  private options: Options;
+  private typescriptApiModelPath: string;
+  private tsconfigPath: string;
+  private schemaGenerator: SchemaGenerator;
+
+  constructor(serverless: Serverless, options: Options) {
     this.serverless = serverless;
     this.assertPluginOrder();
 
@@ -211,5 +225,3 @@ class ServerlessOpenapiTypeScript {
     return this.schemaGenerator.createSchema(modelName);
   }
 }
-
-module.exports = ServerlessOpenapiTypeScript;
