@@ -10,17 +10,14 @@ interface Options {
 }
 
 export default class ServerlessOpenapiTypeScript {
-  private serverless: Serverless;
   private readonly functionsMissingDocumentation: string[];
   private readonly disable: boolean;
   private hooks: { [hook: string]: () => {}};
-  private options: Options;
   private typescriptApiModelPath: string;
   private tsconfigPath: string;
   private schemaGenerator: SchemaGenerator;
 
-  constructor(serverless: Serverless, options: Options) {
-    this.serverless = serverless;
+  constructor(private serverless: Serverless, private options: Options) {
     this.assertPluginOrder();
 
     this.initOptions(options);
