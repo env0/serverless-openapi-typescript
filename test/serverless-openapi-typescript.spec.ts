@@ -8,6 +8,8 @@ const readFileAsync = promisify(fs.readFile);
 const deleteFileAsync = promisify(fs.unlink);
 const existsAsync = promisify(fs.exists);
 
+jest.setTimeout(60000);
+
 describe('ServerlessOpenapiTypeScript', () => {
     describe('FullProject', () => {
         const projectName = 'full';
