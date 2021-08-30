@@ -1,12 +1,18 @@
 import type Serverless from "serverless";
 import fs from "fs";
 import yaml from "js-yaml";
-import tsj,  {SchemaGenerator} from "ts-json-schema-generator";
+import {SchemaGenerator, createGenerator} from "ts-json-schema-generator";
 import {upperFirst, mergeWith, set, isArray, get, isEmpty } from "lodash" ;
+import {ApiGatewayEvent} from "serverless/plugins/aws/package/compile/events/apiGateway/lib/validate";
 
 interface Options {
   typescriptApiPath?: string;
   tsconfigPath?: string;
+}
+
+type HttpEvent = ApiGatewayEvent['http'] & {
+  documentation?: any;
+  private?: boolean;
 }
 
 export default class ServerlessOpenapiTypeScript {
@@ -23,7 +29,7 @@ export default class ServerlessOpenapiTypeScript {
     this.initOptions(options);
     this.functionsMissingDocumentation = [];
 
-    if (!this.serverless.service.custom.documentation) {
+    if (!this.serverless.service.custom?.documentation) {
       this.log(
         `Disabling OpenAPI generation for ${this.serverless.service.service} - no 'custom.documentation' attribute found`
       );
@@ -64,9 +70,8 @@ export default class ServerlessOpenapiTypeScript {
   async populateServerlessWithModels() {
     this.log('Scanning functions for documentation attribute');
     Object.keys(this.functions).forEach(functionName => {
-      const events = get(this.functions, `${functionName}.events`, []);
-      events.forEach(event => {
-        const httpEvent = event.http;
+      this.functions[functionName]?.events?.forEach((event: ApiGatewayEvent) => {
+        const httpEvent = event.http as HttpEvent;
         if (httpEvent) {
           if (httpEvent.documentation) {
             this.log(`Generating docs for ${functionName}`);
@@ -161,6 +166,7 @@ export default class ServerlessOpenapiTypeScript {
   }
 
   postProcessOpenApi() {
+    // @ts-ignore
     const outputFile = this.serverless.processedInput.options.output;
     const openApi = yaml.load(fs.readFileSync(outputFile));
     this.patchOpenApiVersion(openApi);
@@ -210,7 +216,7 @@ export default class ServerlessOpenapiTypeScript {
 
     this.schemaGenerator =
       this.schemaGenerator ||
-      tsj.createGenerator({
+      createGenerator({
         path: this.typescriptApiModelPath,
         tsconfig: this.tsconfigPath,
         type: `*`,
