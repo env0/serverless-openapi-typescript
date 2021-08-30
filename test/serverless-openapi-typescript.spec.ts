@@ -48,7 +48,7 @@ describe('ServerlessOpenapiTypeScript', () => {
     });
 
     describe('Disable', () => {
-        const projectName = 'Disable';
+        const projectName = 'disable';
 
         it('should not create docs', async () => {
             await runOpenApiGenerate(projectName);
