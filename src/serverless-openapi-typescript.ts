@@ -228,5 +228,3 @@ export default class ServerlessOpenapiTypeScript {
     return this.schemaGenerator.createSchema(modelName);
   }
 }
-
-module.exports = ServerlessOpenapiTypeScript;
