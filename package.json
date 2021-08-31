@@ -15,6 +15,7 @@
   "devDependencies": {
     "@conqa/serverless-openapi-documentation": "^1.1.0",
     "@types/jest": "^27.0.1",
+    "@types/serverless": "^1.78.35",
     "jest": "^27.0.6",
     "serverless": "^2.56.0",
     "ts-jest": "^27.0.5",

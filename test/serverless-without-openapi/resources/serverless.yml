@@ -1,0 +1,15 @@
+service: serverless-openapi-typescript-demo
+provider:
+  name: aws
+
+plugins:
+  - ../src/index
+  - ../node_modules/@conqa/serverless-openapi-documentation
+
+
+custom:
+  documentation:
+    title: 'Project'
+    description: |
+      It is a long established fact that a reader will be distracted by the readable content of a
+    apiNamespace: ProjectApi

@@ -1,0 +1,76 @@
+service: serverless-openapi-typescript-demo
+provider:
+  name: aws
+
+plugins:
+  - ../node_modules/@conqa/serverless-openapi-documentation
+  - ../src/index
+
+functions:
+  createFunc:
+    handler: handler.create
+    events:
+      - http:
+          documentation:
+            summary: "Create Function"
+            description: |
+              Create Function1
+              Create Function2
+              Create Function3
+            queryParams:
+              - name: 'param1'
+                description: 'Param 1'
+                schema: 'ProjectApi.Bool'
+              - name: 'param2'
+                description: 'Param 2'
+                schema: 'ProjectApi.String'
+              - name: 'param3'
+                description: 'Param 3'
+                schema: 'ProjectApi.Number'
+          path: create/{funcName}
+          method: post
+          request:
+            parameters:
+              paths:
+                funcName: true
+              querystrings:
+                param1: false
+                param2: true
+                param3: false
+
+  deleteFunc:
+    handler: handler.delete
+    events:
+      - http:
+          documentation:
+            summary: "Delete Function"
+            description: "Delete"
+          path: delete/{funcName}
+          method: delete
+          request:
+            parameters:
+              paths:
+                funcName: true
+
+  updateFunc:
+    handler: handler.update
+    events:
+      - http:
+          documentation:
+            summary: "Delete Function"
+            description: "Delete"
+          path: update
+          method: put
+
+  getFunc:
+    handler: handler.update
+    events:
+      - http:
+          documentation:
+            summary: "Get Function"
+          path: get/{funcName}
+          method: get
+          request:
+            parameters:
+              paths:
+                funcName: true
