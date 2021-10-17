@@ -422,8 +422,6 @@ custom:
          description: BazDescription
 ```
 
-Endpoints that are not attached to a custom tag, are still attached to the title ( which is the default tag ).
-
 ```yaml
 functions:
   createFunc:
@@ -435,6 +433,7 @@ functions:
             tag: FooBarTitle
 ```
 
+Endpoints that are not attached to a custom tag, are still attached to the title ( which is the default tag ).
 
 ## Install
 
