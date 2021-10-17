@@ -403,6 +403,39 @@ The `responseHeaders/requestHeaders` section of the configuration allows you to 
 TypeScript generation for these isn't supported.    
 For information on how to specify these yourself, see [Response Headers](https://github.com/conqa/serverless-openapi-documentation#responseheaders-and-requestheaders) on the base plugin page.  
 
+##### `customTags`
+
+In some cases where a single serverless.yml contains endpoints which can be grouped differently,
+you can define custom tags as following:
+
+```yaml
+custom:
+  documentation:
+    title: 'Project'
+    description: DummyDescription
+
+    apiNamespace: ProjectApi
+    tags:
+       - name: FooBarTitle
+         description: FooBarDescription
+       - name: BazTitle
+         description: BazDescription
+```
+
+Endpoints that are not attached to a custom tag, are still attached to the title ( which is the default tag ).
+
+```yaml
+functions:
+  createFunc:
+    handler: handler.create
+    events:
+      - http:
+          documentation:
+            summary: "Create Function"
+            tag: FooBarTitle
+```
+
+
 ## Install
 
 This plugin is **an extension**.  
