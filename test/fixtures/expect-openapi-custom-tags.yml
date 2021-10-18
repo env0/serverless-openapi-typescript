@@ -1,58 +1,18 @@
 openapi: 3.1.0
 components:
   schemas:
-    ObjectType:
-      type: object
-      properties:
-        types:
-          type: array
-          items:
-            type: string
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/ObjectType'
-      additionalProperties: false
     ProjectApi.CreateFunc.Request.Body:
-      type: object
-      properties:
-        data:
-          type: string
-        statusCode:
-          type: number
-        enable:
-          type: boolean
-        object:
-          $ref: '#/components/schemas/ObjectType'
-      required:
-        - data
-        - enable
-      additionalProperties: false
+      type: 'null'
     ProjectApi.CreateFunc.Response:
-      type: object
-      properties:
-        id:
-          type: string
-        uuid:
-          type: string
-      required:
-        - id
-        - uuid
-      additionalProperties: false
+      type: 'null'
     ProjectApi.GetFunc.Response:
-      type: object
-      properties:
-        data:
-          type: string
-      required:
-        - data
-      additionalProperties: false
+      type: 'null'
 info:
   title: Project
   description: DummyDescription
-  version: e8c31aa8-7d0c-45cf-b44a-3c3ef1b3780b
+  version: 3a5b57df-54e7-4dd2-9423-d4674809c816
 paths:
-  /create/{funcName}:
+  /create:
     post:
       operationId: createFunc
       summary: Create Function
@@ -76,35 +36,23 @@ paths:
                 $ref: '#/components/schemas/ProjectApi.CreateFunc.Response'
       tags:
         - FooBarTitle
-  /delete/{funcName}:
+  /delete:
     delete:
       operationId: deleteFunc
       summary: Delete Function
       description: Delete
-      parameters:
-        - name: funcName
-          in: path
-          description: ''
-          required: true
-          schema:
-            type: string
+      parameters: []
       responses:
         '204':
           description: Status 204 Response
           content: {}
       tags:
         - Project
-  /get/{funcName}:
+  /get:
     get:
       operationId: getFunc
       summary: Get Function
-      parameters:
-        - name: funcName
-          in: path
-          description: ''
-          required: true
-          schema:
-            type: string
+      parameters: []
       responses:
         '200':
           description: ''

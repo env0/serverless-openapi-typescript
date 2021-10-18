@@ -10,7 +10,6 @@ custom:
   documentation:
     title: 'Project'
     description: DummyDescription
-
     apiNamespace: ProjectApi
     tags:
        - name: FooBarTitle
@@ -31,7 +30,7 @@ functions:
               Create Function1
               Create Function2
               Create Function3
-          path: create/{funcName}
+          path: create
           method: post
 
   deleteFunc:
@@ -41,12 +40,8 @@ functions:
           documentation:
             summary: "Delete Function"
             description: "Delete"
-          path: delete/{funcName}
+          path: delete
           method: delete
-          request:
-            parameters:
-              paths:
-                funcName: true
 
   getFunc:
     handler: handler.update
@@ -55,10 +50,6 @@ functions:
           documentation:
             summary: "Get Function"
             tag: BazTitle
-          path: get/{funcName}
+          path: get
           method: get
-          request:
-            parameters:
-              paths:
-                funcName: true
 
