@@ -13,8 +13,8 @@ jest.setTimeout(60000);
 describe('ServerlessOpenapiTypeScript', () => {
     describe.each`
     testCase         | projectName
-    ${'FullProject'} | ${'full'}
-    ${'CustomTags'}  | ${'custom-tags'}
+    ${'Full Project'} | ${'full'}
+    ${'Custom Tags'}  | ${'custom-tags'}
     `('when using $testCase', ( { projectName } ) => {
 
         beforeEach(async () => {
