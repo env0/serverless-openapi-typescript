@@ -1,0 +1,55 @@
+service: serverless-openapi-typescript-demo
+provider:
+  name: aws
+
+plugins:
+  - ../node_modules/@conqa/serverless-openapi-documentation
+  - ../src/index
+
+custom:
+  documentation:
+    title: 'Project'
+    description: DummyDescription
+    apiNamespace: ProjectApi
+    tags:
+       - name: FooBarTitle
+         description: FooBarDescription
+       - name: BazTitle
+         description: BazDescription
+
+
+functions:
+  createFunc:
+    handler: handler.create
+    events:
+      - http:
+          documentation:
+            summary: "Create Function"
+            tag: FooBarTitle
+            description: |
+              Create Function1
+              Create Function2
+              Create Function3
+          path: create
+          method: post
+
+  deleteFunc:
+    handler: handler.delete
+    events:
+      - http:
+          documentation:
+            summary: "Delete Function"
+            description: "Delete"
+          path: delete
+          method: delete
+
+  getFunc:
+    handler: handler.update
+    events:
+      - http:
+          documentation:
+            summary: "Get Function"
+            tag: BazTitle
+          path: get
+          method: get
+

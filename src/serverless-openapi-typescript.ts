@@ -181,6 +181,7 @@ export default class ServerlessOpenapiTypeScript {
   }
 
   tagMethods(openApi) {
+
     const tagName = openApi.info.title;
     openApi.tags = [
       {
@@ -188,9 +189,20 @@ export default class ServerlessOpenapiTypeScript {
         description: openApi.info.description
       }
     ];
+    const customTags = this.serverless.service.custom.documentation?.tags;
+    if (customTags) openApi.tags = openApi.tags.concat(customTags)
+
     Object.values(openApi.paths).forEach(path => {
       Object.values(path).forEach(method => {
-        method.tags = [tagName];
+        const httpEvent = this.functions[method.operationId]?.events?.find(
+            (e: ApiGatewayEvent) => e.http
+        ) as ApiGatewayEvent;
+        const http: HttpEvent = httpEvent.http;
+        if (http.documentation?.tag) {
+          method.tags = [http.documentation.tag];
+        } else {
+          method.tags = [tagName];
+        }
       });
     });
   }

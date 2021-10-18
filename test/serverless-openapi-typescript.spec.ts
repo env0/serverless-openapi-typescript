@@ -11,14 +11,17 @@ const existsAsync = promisify(fs.exists);
 jest.setTimeout(60000);
 
 describe('ServerlessOpenapiTypeScript', () => {
-    describe('FullProject', () => {
-        const projectName = 'full';
+    describe.each`
+    testCase         | projectName
+    ${'Full Project'} | ${'full'}
+    ${'Custom Tags'}  | ${'custom-tags'}
+    `('when using $testCase', ( { projectName } ) => {
 
         beforeEach(async () => {
             await deleteOutputFile(projectName);
         });
 
-        it('should create full file with all types and docs', async () => {
+        it('should create the expected file', async () => {
             await runOpenApiGenerate(projectName);
 
             await assertYamlFilesEquals(projectName);
