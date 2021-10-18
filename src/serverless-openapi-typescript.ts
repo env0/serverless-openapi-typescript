@@ -189,8 +189,8 @@ export default class ServerlessOpenapiTypeScript {
         description: openApi.info.description
       }
     ];
-    const tags = this.serverless.service.custom.documentation?.tags;
-    if (tags) openApi.tags = openApi.tags.concat(tags)
+    const customTags = this.serverless.service.custom.documentation?.tags;
+    if (customTags) openApi.tags = openApi.tags.concat(customTags)
 
     Object.values(openApi.paths).forEach(path => {
       Object.values(path).forEach(method => {
