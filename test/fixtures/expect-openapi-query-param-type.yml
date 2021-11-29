@@ -3,6 +3,17 @@ components:
   schemas:
     ProjectApi.Func.Response:
       type: 'null'
+    ProjectApi.Func.Request.QueryParams:
+      type: object
+      properties:
+        name:
+          type: string
+          enum:
+            - foo
+            - bar
+      required:
+        - name
+      additionalProperties: false
 info:
   title: Project
   description: DummyDescription

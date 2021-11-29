@@ -154,7 +154,13 @@ export default class ServerlessOpenapiTypeScript {
       // no-break;
       case 'get':
         const responseModelName = `${definitionPrefix}.Response`;
-        this.setModel(`${definitionPrefix}.Response`);
+        const queryParamsModelName = `${definitionPrefix}.Request.QueryParams`;
+        this.setModel(responseModelName);
+        try {
+            this.setModel(queryParamsModelName);
+        } catch(err) {
+          this.log(`Didn't find ${queryParamsModelName}`);
+        }
         set(httpEvent, 'documentation.methodResponses', [
           {
             statusCode: 200,
