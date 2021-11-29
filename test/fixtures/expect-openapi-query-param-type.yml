@@ -1,71 +1,33 @@
 openapi: 3.1.0
 components:
   schemas:
-    ProjectApi.CreateFunc.Request.Body:
-      type: 'null'
-    ProjectApi.CreateFunc.Response:
-      type: 'null'
-    ProjectApi.GetFunc.Response:
+    ProjectApi.Func.Response:
       type: 'null'
 info:
   title: Project
   description: DummyDescription
-  version: 3a5b57df-54e7-4dd2-9423-d4674809c816
 paths:
-  /create:
-    post:
-      operationId: createFunc
-      summary: Create Function
-      description: |
-        Create Function1
-        Create Function2
-        Create Function3
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProjectApi.CreateFunc.Request.Body'
-        description: ''
-      parameters: []
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProjectApi.CreateFunc.Response'
-      tags:
-        - FooBarTitle
-  /delete:
-    delete:
-      operationId: deleteFunc
-      summary: Delete Function
-      description: Delete
-      parameters: []
-      responses:
-        '204':
-          description: Status 204 Response
-          content: {}
-      tags:
-        - Project
   /get:
     get:
-      operationId: getFunc
+      operationId: func
       summary: Get Function
-      parameters: []
+      parameters:
+        - name: name
+          in: query
+          description: ''
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: string
       responses:
         '200':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectApi.GetFunc.Response'
+                $ref: '#/components/schemas/ProjectApi.Func.Response'
       tags:
-        - BazTitle
+        - Project
 tags:
   - name: Project
     description: DummyDescription
-  - name: FooBarTitle
-    description: FooBarDescription
-  - name: BazTitle
-    description: BazDescription

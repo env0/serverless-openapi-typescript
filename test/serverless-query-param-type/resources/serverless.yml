@@ -18,13 +18,10 @@ functions:
     events:
       - http:
           documentation:
-            summary: "Create Function"
-            description: |
-              Create Function1
-              Create Function2
-              Create Function3
-          path: create
-          method: post
+            summary: "Get Function"
+            description: ''
+          path: get
+          method: get
           request:
             parameters:
               querystrings:
