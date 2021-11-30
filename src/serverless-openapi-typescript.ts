@@ -128,7 +128,7 @@ export default class ServerlessOpenapiTypeScript {
                 }
                 const definitionPrefix = this.getDefinitionPrefix(functionName);
                 const generatedSchemas = get(this.serverless, 'service.custom.documentation.models', []);
-                const paramTypeName = `${definitionPrefix}.Request.${upperFirst(documentationKey)}.${name}`;
+                const paramTypeName = `${definitionPrefix}.Request.${namespaceNames[documentationKey]}.${name}`;
                 const haveSchema = !isEmpty(generatedSchemas.find(schemaName => schemaName.name === paramTypeName));
                 return haveSchema ? {$ref: `#/components/schemas/${paramTypeName}`} : {type: 'string'}
             }
