@@ -83,7 +83,7 @@ export default class ServerlessOpenapiTypeScript {
                             {params: paths, documentationKey: 'pathParams'},
                             {params: querystrings, documentationKey: 'queryParams'}
                         ].forEach(({params, documentationKey}) => {
-                            this.setDefaultParamsDocumentation(params, httpEvent, documentationKey);
+                            this.setDefaultParamsDocumentation(params, httpEvent, documentationKey, functionName);
                         });
                     } else if (httpEvent.documentation !== null && !httpEvent.private) {
                         this.functionsMissingDocumentation.push(functionName);
@@ -110,7 +110,7 @@ export default class ServerlessOpenapiTypeScript {
         }
     }
 
-    setDefaultParamsDocumentation(params, httpEvent, documentationKey) {
+    setDefaultParamsDocumentation(params, httpEvent, documentationKey, functionName) {
         Object.entries(params).forEach(([name, required]) => {
             httpEvent.documentation[documentationKey] = httpEvent.documentation[documentationKey] || [];
 
@@ -120,11 +120,15 @@ export default class ServerlessOpenapiTypeScript {
             if (existingDocumentedParam && typeof existingDocumentedParam.schema === 'string') {
                 existingDocumentedParam.schema = this.generateSchema(existingDocumentedParam.schema);
             }
-
+            const definitionPrefix = this.getDefinitionPrefix(functionName);
+            const generatedSchemas = this.serverless.service.custom.documentation.models
+            const paramTypeName = `${definitionPrefix}.Request.${upperFirst(documentationKey)}.${name}`;
+            const haveSchema = !isEmpty(generatedSchemas.find(schemaName => schemaName.name === paramTypeName));
+            const schema = haveSchema ? {$ref: `#/components/schemas/${paramTypeName}`} : {type: 'string'}
             const paramDocumentationFromSls = {
                 name,
                 required,
-                schema: {type: 'string'}
+                schema
             };
 
             if (!existingDocumentedParam) {
@@ -137,7 +141,7 @@ export default class ServerlessOpenapiTypeScript {
     }
 
     setModels(httpEvent, functionName, querystrings = {}) {
-        const definitionPrefix = `${this.serverless.service.custom.documentation.apiNamespace}.${upperFirst(functionName)}`;
+        const definitionPrefix = this.getDefinitionPrefix(functionName);
         const method = httpEvent.method.toLowerCase();
         switch (method) {
             case 'delete':
@@ -172,6 +176,10 @@ export default class ServerlessOpenapiTypeScript {
                     }
                 ]);
         }
+    }
+
+    private getDefinitionPrefix(functionName) {
+        return `${this.serverless.service.custom.documentation.apiNamespace}.${upperFirst(functionName)}`;
     }
 
     postProcessOpenApi() {
