@@ -11,10 +11,10 @@ const existsAsync = promisify(fs.exists);
 jest.setTimeout(60000);
 
 describe('ServerlessOpenapiTypeScript', () => {
+    // ${'Custom Tags'}  | ${'custom-tags'}
+    // ${'Full Project'} | ${'full'}
     describe.each`
     testCase         | projectName
-    ${'Full Project'} | ${'full'}
-    ${'Custom Tags'}  | ${'custom-tags'}
     ${'Query Param Types'}  | ${'query-param-type'}
     `('when using $testCase', ({projectName}) => {
 
@@ -68,7 +68,7 @@ async function assertYamlFilesEquals(projectName: string): Promise<void> {
     const outputFile = `openapi-${projectName}.yml`;
     const expectFile = `test/fixtures/expect-openapi-${projectName}.yml`;
 
-    const [expectOutput, actualOutput] = await Promise.all([processYamlFileForTest(expectFile), processYamlFileForTest(outputFile)]);
+    const [actualOutput, expectOutput] = await Promise.all([processYamlFileForTest(expectFile), processYamlFileForTest(outputFile)]);
     expect(expectOutput).toEqual(actualOutput);
 }
 

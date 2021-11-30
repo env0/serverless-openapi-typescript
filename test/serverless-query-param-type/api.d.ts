@@ -1,8 +1,10 @@
 export namespace ProjectApi {
     export namespace Func {
         export namespace Request {
-            export type QueryParams = {
-                name: 'foo' | 'bar'
+            export namespace QueryParams {
+                export type name =
+                     'foo' | 'bar'
+
             }
         }
 

@@ -3,17 +3,11 @@ components:
   schemas:
     ProjectApi.Func.Response:
       type: 'null'
-    ProjectApi.Func.Request.QueryParams:
-      type: object
-      properties:
-        name:
-          type: string
-          enum:
-            - foo
-            - bar
-      required:
-        - name
-      additionalProperties: false
+    ProjectApi.Func.Request.QueryParams.name:
+      type: string
+      enum:
+        - foo
+        - bar
 info:
   title: Project
   description: DummyDescription
@@ -29,7 +23,7 @@ paths:
           required: true
           allowEmptyValue: false
           schema:
-            type: string
+            $ref: '#/components/schemas/ProjectApi.Func.Request.QueryParams.name'
       responses:
         '200':
           description: ''
