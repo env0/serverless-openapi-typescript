@@ -13,6 +13,19 @@ custom:
     apiNamespace: ProjectApi
 
 functions:
+  withoutModels:
+    handler: handler.create
+    events:
+      - http:
+          documentation:
+            summary: "Function without models, check the serverless.service.custom.documentation.models equal to undefined we don't explode"
+            description: ''
+          path: foo
+          method: delete
+          request:
+            parameters:
+              querystrings:
+                something: true
   func:
     handler: handler.create
     events:

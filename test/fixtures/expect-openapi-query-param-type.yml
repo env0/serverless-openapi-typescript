@@ -12,6 +12,27 @@ info:
   title: Project
   description: DummyDescription
 paths:
+  /foo:
+    delete:
+      operationId: withoutModels
+      summary: >-
+        Function without models, check the
+        serverless.service.custom.documentation.models equal to undefined we
+        don't explode
+      parameters:
+        - name: something
+          in: query
+          description: ''
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Status 204 Response
+          content: { }
+      tags:
+        - Project
   /get:
     get:
       operationId: func
