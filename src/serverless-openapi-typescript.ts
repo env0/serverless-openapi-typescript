@@ -122,6 +122,10 @@ export default class ServerlessOpenapiTypeScript {
             }
 
             const getParamSchema = () => {
+                const namespaceNames = {
+                    'queryParams': 'QueryStringParameters',
+                    'pathParams': 'PathParameters'
+                }
                 const definitionPrefix = this.getDefinitionPrefix(functionName);
                 const generatedSchemas = get(this.serverless, 'service.custom.documentation.models', []);
                 const paramTypeName = `${definitionPrefix}.Request.${upperFirst(documentationKey)}.${name}`;
@@ -177,7 +181,7 @@ export default class ServerlessOpenapiTypeScript {
     private setQueryStringsModel(querystrings: Record<string, boolean>, definitionPrefix: string) {
         if (!isEmpty(querystrings)) {
             keys(querystrings).forEach(entry => {
-                const queryParamsModelName = `${definitionPrefix}.Request.QueryParams.${entry}`;
+                const queryParamsModelName = `${definitionPrefix}.Request.QueryStringParameters.${entry}`;
                 try {
                     this.setModel(queryParamsModelName);
                 } catch (err) {
