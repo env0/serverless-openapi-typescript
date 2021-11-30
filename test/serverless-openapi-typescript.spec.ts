@@ -13,9 +13,9 @@ jest.setTimeout(60000);
 describe('ServerlessOpenapiTypeScript', () => {
     describe.each`
     testCase         | projectName
+    ${'Query Param Types'}  | ${'query-param-type'}
     ${'Custom Tags'}  | ${'custom-tags'}
     ${'Full Project'} | ${'full'}
-    ${'Query Param Types'}  | ${'query-param-type'}
     `('when using $testCase', ({projectName}) => {
 
         beforeEach(async () => {
