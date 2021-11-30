@@ -2,7 +2,7 @@ import type Serverless from "serverless";
 import fs from "fs";
 import yaml from "js-yaml";
 import {SchemaGenerator, createGenerator} from "ts-json-schema-generator";
-import {upperFirst, mergeWith, set, isArray, get, isEmpty, keys} from "lodash" ;
+import {upperFirst, mergeWith, set, isArray, get, isEmpty } from "lodash" ;
 import {ApiGatewayEvent} from "serverless/plugins/aws/package/compile/events/apiGateway/lib/validate";
 
 interface Options {
@@ -18,7 +18,7 @@ type HttpEvent = ApiGatewayEvent['http'] & {
 export default class ServerlessOpenapiTypeScript {
     private readonly functionsMissingDocumentation: string[];
     private readonly disable: boolean;
-    private hooks: { [hook: string]: () => {} };
+    private hooks: { [hook: string]: () => {}};
     private typescriptApiModelPath: string;
     private tsconfigPath: string;
     private schemaGenerator: SchemaGenerator;
@@ -75,15 +75,16 @@ export default class ServerlessOpenapiTypeScript {
                 if (httpEvent) {
                     if (httpEvent.documentation) {
                         this.log(`Generating docs for ${functionName}`);
-                        const querystrings = get(httpEvent, 'request.parameters.querystrings', {});
-                        this.setModels(httpEvent, functionName, querystrings);
+
+                        this.setModels(httpEvent, functionName);
 
                         const paths = get(httpEvent, 'request.parameters.paths', []);
+                        const querystrings = get(httpEvent, 'request.parameters.querystrings', {});
                         [
-                            {params: paths, documentationKey: 'pathParams'},
-                            {params: querystrings, documentationKey: 'queryParams'}
-                        ].forEach(({params, documentationKey}) => {
-                            this.setParamsDocumentation(params, httpEvent, documentationKey, functionName);
+                            { params: paths, documentationKey: 'pathParams' },
+                            { params: querystrings, documentationKey: 'queryParams' }
+                        ].forEach(({ params, documentationKey }) => {
+                            this.setDefaultParamsDocumentation(params, httpEvent, documentationKey);
                         });
                     } else if (httpEvent.documentation !== null && !httpEvent.private) {
                         this.functionsMissingDocumentation.push(functionName);
@@ -110,7 +111,7 @@ export default class ServerlessOpenapiTypeScript {
         }
     }
 
-    setParamsDocumentation(params, httpEvent, documentationKey, functionName) {
+    setDefaultParamsDocumentation(params, httpEvent, documentationKey) {
         Object.entries(params).forEach(([name, required]) => {
             httpEvent.documentation[documentationKey] = httpEvent.documentation[documentationKey] || [];
 
@@ -121,23 +122,10 @@ export default class ServerlessOpenapiTypeScript {
                 existingDocumentedParam.schema = this.generateSchema(existingDocumentedParam.schema);
             }
 
-            const getParamSchema = () => {
-                const namespaceNames = {
-                    'queryParams': 'QueryStringParameters',
-                    'pathParams': 'PathParameters'
-                }
-                const definitionPrefix = this.getDefinitionPrefix(functionName);
-                const generatedSchemas = this.serverless.service.custom.documentation.models
-                const paramTypeName = `${definitionPrefix}.Request.${namespaceNames[documentationKey]}.${name}`;
-                const haveSchema = !isEmpty(generatedSchemas.find(schemaName => schemaName.name === paramTypeName));
-                return haveSchema ? {$ref: `#/components/schemas/${paramTypeName}`} : {type: 'string'}
-            }
-
-            const schema = getParamSchema();
             const paramDocumentationFromSls = {
                 name,
                 required,
-                schema
+                schema: { type: 'string' }
             };
 
             if (!existingDocumentedParam) {
@@ -149,50 +137,32 @@ export default class ServerlessOpenapiTypeScript {
         });
     }
 
-    setModels(httpEvent, functionName, querystrings = {}) {
-        const definitionPrefix = this.getDefinitionPrefix(functionName);
+    setModels(httpEvent, functionName) {
+        const definitionPrefix = `${this.serverless.service.custom.documentation.apiNamespace}.${upperFirst(functionName)}`;
         const method = httpEvent.method.toLowerCase();
         switch (method) {
             case 'delete':
-                set(httpEvent, 'documentation.methodResponses', [{statusCode: 204, responseModels: {}}]);
+                set(httpEvent, 'documentation.methodResponses', [{ statusCode: 204, responseModels: {} }]);
                 break;
             case 'patch':
             case 'put':
             case 'post':
                 const requestModelName = `${definitionPrefix}.Request.Body`;
                 this.setModel(`${definitionPrefix}.Request.Body`);
-                set(httpEvent, 'documentation.requestModels', {'application/json': requestModelName});
-                set(httpEvent, 'documentation.requestBody', {description: ''});
+                set(httpEvent, 'documentation.requestModels', { 'application/json': requestModelName });
+                set(httpEvent, 'documentation.requestBody', { description: '' });
             // no-break;
             case 'get':
                 const responseModelName = `${definitionPrefix}.Response`;
-                this.setModel(responseModelName);
-                this.setQueryStringsModel(querystrings, definitionPrefix);
+                this.setModel(`${definitionPrefix}.Response`);
                 set(httpEvent, 'documentation.methodResponses', [
                     {
                         statusCode: 200,
-                        responseBody: {description: ''},
-                        responseModels: {'application/json': responseModelName}
+                        responseBody: { description: '' },
+                        responseModels: { 'application/json': responseModelName }
                     }
                 ]);
         }
-    }
-
-    private setQueryStringsModel(querystrings: Record<string, boolean>, definitionPrefix: string) {
-        if (!isEmpty(querystrings)) {
-            keys(querystrings).forEach(entry => {
-                const queryParamsModelName = `${definitionPrefix}.Request.QueryStringParameters.${entry}`;
-                try {
-                    this.setModel(queryParamsModelName);
-                } catch (err) {
-                    this.log(`Didn't find ${queryParamsModelName}, wont generate model`);
-                }
-            })
-        }
-    }
-
-    private getDefinitionPrefix(functionName) {
-        return `${this.serverless.service.custom.documentation.apiNamespace}.${upperFirst(functionName)}`;
     }
 
     postProcessOpenApi() {
@@ -242,7 +212,7 @@ export default class ServerlessOpenapiTypeScript {
             this.serverless.service.custom,
             {
                 documentation: {
-                    models: [{name: modelName, contentType: 'application/json', schema: this.generateSchema(modelName)}]
+                    models: [{ name: modelName, contentType: 'application/json', schema: this.generateSchema(modelName) }]
                 }
             },
             (objValue, srcValue) => {
