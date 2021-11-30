@@ -3,7 +3,7 @@ components:
   schemas:
     ProjectApi.Func.Response:
       type: 'null'
-    ProjectApi.Func.Request.QueryParams.name:
+    ProjectApi.Func.Request.QueryStringParameters.name:
       type: string
       enum:
         - foo
@@ -23,7 +23,8 @@ paths:
           required: true
           allowEmptyValue: false
           schema:
-            $ref: '#/components/schemas/ProjectApi.Func.Request.QueryParams.name'
+            $ref: >-
+              #/components/schemas/ProjectApi.Func.Request.QueryStringParameters.name
         - name: other
           in: query
           description: ''

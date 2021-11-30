@@ -122,9 +122,13 @@ export default class ServerlessOpenapiTypeScript {
             }
 
             const getParamSchema = () => {
+                const namespaceNames = {
+                    'queryParams': 'QueryStringParameters',
+                    'pathParams': 'PathParameters'
+                }
                 const definitionPrefix = this.getDefinitionPrefix(functionName);
                 const generatedSchemas = this.serverless.service.custom.documentation.models
-                const paramTypeName = `${definitionPrefix}.Request.${upperFirst(documentationKey)}.${name}`;
+                const paramTypeName = `${definitionPrefix}.Request.${namespaceNames[documentationKey]}.${name}`;
                 const haveSchema = !isEmpty(generatedSchemas.find(schemaName => schemaName.name === paramTypeName));
                 return haveSchema ? {$ref: `#/components/schemas/${paramTypeName}`} : {type: 'string'}
             }
@@ -177,7 +181,7 @@ export default class ServerlessOpenapiTypeScript {
     private setQueryStringsModel(querystrings: Record<string, boolean>, definitionPrefix: string) {
         if (!isEmpty(querystrings)) {
             keys(querystrings).forEach(entry => {
-                const queryParamsModelName = `${definitionPrefix}.Request.QueryParams.${entry}`;
+                const queryParamsModelName = `${definitionPrefix}.Request.QueryStringParameters.${entry}`;
                 try {
                     this.setModel(queryParamsModelName);
                 } catch (err) {
