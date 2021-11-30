@@ -1,0 +1,31 @@
+service: serverless-openapi-typescript-demo
+provider:
+  name: aws
+
+plugins:
+  - ../node_modules/@conqa/serverless-openapi-documentation
+  - ../src/index
+
+custom:
+  documentation:
+    title: 'Project'
+    description: DummyDescription
+    apiNamespace: ProjectApi
+
+functions:
+  func:
+    handler: handler.create
+    events:
+      - http:
+          documentation:
+            summary: "Get Function"
+            description: ''
+          path: get
+          method: get
+          request:
+            parameters:
+              querystrings:
+                name: true
+                other: false
+                another: true
+

@@ -1,7 +1,7 @@
 import Serverless from "serverless";
 import path from "path";
 import fs from "fs";
-import { promisify } from "util";
+import {promisify} from "util";
 import yaml from "js-yaml";
 
 const readFileAsync = promisify(fs.readFile);
@@ -13,9 +13,10 @@ jest.setTimeout(60000);
 describe('ServerlessOpenapiTypeScript', () => {
     describe.each`
     testCase         | projectName
-    ${'Full Project'} | ${'full'}
     ${'Custom Tags'}  | ${'custom-tags'}
-    `('when using $testCase', ( { projectName } ) => {
+    ${'Full Project'} | ${'full'}
+    ${'Query Param Types'}  | ${'query-param-type'}
+    `('when using $testCase', ({projectName}) => {
 
         beforeEach(async () => {
             await deleteOutputFile(projectName);
@@ -40,7 +41,7 @@ describe('ServerlessOpenapiTypeScript', () => {
         const projectName = 'not-documented';
 
         it('should throw an error when found function not documented', async () => {
-            await expect(runOpenApiGenerate(projectName)).rejects.toEqual(expect.objectContaining({ message: expect.stringContaining('deleteFunc')}));
+            await expect(runOpenApiGenerate(projectName)).rejects.toEqual(expect.objectContaining({message: expect.stringContaining('deleteFunc')}));
         });
     });
 
@@ -63,15 +64,15 @@ describe('ServerlessOpenapiTypeScript', () => {
     });
 });
 
-async function assertYamlFilesEquals(projectName: string) : Promise<void> {
+async function assertYamlFilesEquals(projectName: string): Promise<void> {
     const outputFile = `openapi-${projectName}.yml`;
     const expectFile = `test/fixtures/expect-openapi-${projectName}.yml`;
 
-    const [expectOutput, actualOutput] = await Promise.all([processYamlFileForTest(expectFile), processYamlFileForTest(outputFile)]);
+    const [actualOutput, expectOutput] = await Promise.all([processYamlFileForTest(expectFile), processYamlFileForTest(outputFile)]);
     expect(expectOutput).toEqual(actualOutput);
 }
 
-async function processYamlFileForTest(path: string) : Promise<string> {
+async function processYamlFileForTest(path: string): Promise<string> {
     const yamlData = await readYaml(path);
     delete yamlData.info.version;
     return yaml.dump(yamlData);
@@ -84,8 +85,9 @@ async function readYaml(path: string) {
 
 async function deleteOutputFile(project) {
     try {
-        await deleteFileAsync( `openapi-${project}.yml`);
-    } catch {}
+        await deleteFileAsync(`openapi-${project}.yml`);
+    } catch {
+    }
 }
 
 async function runOpenApiGenerate(projectName) {
