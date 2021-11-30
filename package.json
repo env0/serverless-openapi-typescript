@@ -1,6 +1,6 @@
 {
   "name": "serverless-openapi-typescript",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "An extension of @conqa/serverless-openapi-documentation that also generates your OpenAPI models from TypeScript",
   "main": "dist/index.js",
   "scripts": {
