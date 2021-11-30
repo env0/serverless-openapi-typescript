@@ -26,4 +26,6 @@ functions:
             parameters:
               querystrings:
                 name: true
+                other: false
+                another: true
 

@@ -4,7 +4,6 @@ export namespace ProjectApi {
             export namespace QueryParams {
                 export type name =
                      'foo' | 'bar'
-
             }
         }
 

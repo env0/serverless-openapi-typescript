@@ -24,6 +24,20 @@ paths:
           allowEmptyValue: false
           schema:
             $ref: '#/components/schemas/ProjectApi.Func.Request.QueryParams.name'
+        - name: other
+          in: query
+          description: ''
+          required: false
+          allowEmptyValue: false
+          schema:
+            type: string
+        - name: another
+          in: query
+          description: ''
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: string
       responses:
         '200':
           description: ''
