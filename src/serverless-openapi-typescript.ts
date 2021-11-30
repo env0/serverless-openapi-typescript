@@ -181,7 +181,7 @@ export default class ServerlessOpenapiTypeScript {
                 try {
                     this.setModel(queryParamsModelName);
                 } catch (err) {
-                    this.log(`Didn't find ${queryParamsModelName}`);
+                    this.log(`Didn't find ${queryParamsModelName}, wont generate model`);
                 }
             })
         }
