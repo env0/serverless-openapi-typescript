@@ -11,10 +11,10 @@ const existsAsync = promisify(fs.exists);
 jest.setTimeout(60000);
 
 describe('ServerlessOpenapiTypeScript', () => {
-    // ${'Custom Tags'}  | ${'custom-tags'}
-    // ${'Full Project'} | ${'full'}
     describe.each`
     testCase         | projectName
+    ${'Custom Tags'}  | ${'custom-tags'}
+    ${'Full Project'} | ${'full'}
     ${'Query Param Types'}  | ${'query-param-type'}
     `('when using $testCase', ({projectName}) => {
 

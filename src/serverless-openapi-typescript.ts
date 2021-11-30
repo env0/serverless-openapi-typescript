@@ -83,7 +83,7 @@ export default class ServerlessOpenapiTypeScript {
                             {params: paths, documentationKey: 'pathParams'},
                             {params: querystrings, documentationKey: 'queryParams'}
                         ].forEach(({params, documentationKey}) => {
-                            this.setDefaultParamsDocumentation(params, httpEvent, documentationKey, functionName);
+                            this.setParamsDocumentation(params, httpEvent, documentationKey, functionName);
                         });
                     } else if (httpEvent.documentation !== null && !httpEvent.private) {
                         this.functionsMissingDocumentation.push(functionName);
@@ -110,7 +110,7 @@ export default class ServerlessOpenapiTypeScript {
         }
     }
 
-    setDefaultParamsDocumentation(params, httpEvent, documentationKey, functionName) {
+    setParamsDocumentation(params, httpEvent, documentationKey, functionName) {
         Object.entries(params).forEach(([name, required]) => {
             httpEvent.documentation[documentationKey] = httpEvent.documentation[documentationKey] || [];
 
@@ -120,11 +120,16 @@ export default class ServerlessOpenapiTypeScript {
             if (existingDocumentedParam && typeof existingDocumentedParam.schema === 'string') {
                 existingDocumentedParam.schema = this.generateSchema(existingDocumentedParam.schema);
             }
-            const definitionPrefix = this.getDefinitionPrefix(functionName);
-            const generatedSchemas = this.serverless.service.custom.documentation.models
-            const paramTypeName = `${definitionPrefix}.Request.${upperFirst(documentationKey)}.${name}`;
-            const haveSchema = !isEmpty(generatedSchemas.find(schemaName => schemaName.name === paramTypeName));
-            const schema = haveSchema ? {$ref: `#/components/schemas/${paramTypeName}`} : {type: 'string'}
+
+            const getParamSchema = () => {
+                const definitionPrefix = this.getDefinitionPrefix(functionName);
+                const generatedSchemas = this.serverless.service.custom.documentation.models
+                const paramTypeName = `${definitionPrefix}.Request.${upperFirst(documentationKey)}.${name}`;
+                const haveSchema = !isEmpty(generatedSchemas.find(schemaName => schemaName.name === paramTypeName));
+                return haveSchema ? {$ref: `#/components/schemas/${paramTypeName}`} : {type: 'string'}
+            }
+
+            const schema = getParamSchema();
             const paramDocumentationFromSls = {
                 name,
                 required,
@@ -157,17 +162,8 @@ export default class ServerlessOpenapiTypeScript {
             // no-break;
             case 'get':
                 const responseModelName = `${definitionPrefix}.Response`;
-                if (!isEmpty(querystrings)) {
-                    keys(querystrings).forEach(entry => {
-                        const queryParamsModelName = `${definitionPrefix}.Request.QueryParams.${entry}`;
-                        this.setModel(responseModelName);
-                        try {
-                            this.setModel(queryParamsModelName);
-                        } catch (err) {
-                            this.log(`Didn't find ${queryParamsModelName}`);
-                        }
-                    })
-                }
+                this.setModel(responseModelName);
+                this.setQueryStringsModel(querystrings, definitionPrefix);
                 set(httpEvent, 'documentation.methodResponses', [
                     {
                         statusCode: 200,
@@ -175,6 +171,19 @@ export default class ServerlessOpenapiTypeScript {
                         responseModels: {'application/json': responseModelName}
                     }
                 ]);
+        }
+    }
+
+    private setQueryStringsModel(querystrings: Record<string, boolean>, definitionPrefix: string) {
+        if (!isEmpty(querystrings)) {
+            keys(querystrings).forEach(entry => {
+                const queryParamsModelName = `${definitionPrefix}.Request.QueryParams.${entry}`;
+                try {
+                    this.setModel(queryParamsModelName);
+                } catch (err) {
+                    this.log(`Didn't find ${queryParamsModelName}`);
+                }
+            })
         }
     }
 
