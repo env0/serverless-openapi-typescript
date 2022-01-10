@@ -14,6 +14,7 @@ describe('ServerlessOpenapiTypeScript', () => {
     describe.each`
     testCase         | projectName
     ${'Custom Tags'}  | ${'custom-tags'}
+    ${'Hyphenated Functions'}  | ${'hyphenated-functions'}
     ${'Full Project'} | ${'full'}
     `('when using $testCase', ({projectName}) => {
 
