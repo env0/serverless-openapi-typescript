@@ -2,7 +2,7 @@ import type Serverless from "serverless";
 import fs from "fs";
 import yaml from "js-yaml";
 import {SchemaGenerator, createGenerator} from "ts-json-schema-generator";
-import {upperFirst, mergeWith, set, isArray, get, isEmpty } from "lodash" ;
+import {upperFirst, camelCase, mergeWith, set, isArray, get, isEmpty } from "lodash" ;
 import {ApiGatewayEvent} from "serverless/plugins/aws/package/compile/events/apiGateway/lib/validate";
 
 interface Options {
@@ -138,7 +138,7 @@ export default class ServerlessOpenapiTypeScript {
     }
 
     setModels(httpEvent, functionName) {
-        const definitionPrefix = `${this.serverless.service.custom.documentation.apiNamespace}.${upperFirst(functionName)}`;
+        const definitionPrefix = `${this.serverless.service.custom.documentation.apiNamespace}.${upperFirst(camelCase(functionName))}`;
         const method = httpEvent.method.toLowerCase();
         switch (method) {
             case 'delete':
