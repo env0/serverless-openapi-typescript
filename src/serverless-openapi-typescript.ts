@@ -171,7 +171,7 @@ export default class ServerlessOpenapiTypeScript {
         const openApi = yaml.load(fs.readFileSync(outputFile));
         this.patchOpenApiVersion(openApi);
         this.tagMethods(openApi);
-        fs.writeFileSync(outputFile, yaml.dump(openApi));
+        fs.writeFileSync(outputFile, outputFile.endsWith('json') ? JSON.stringify(openApi, null, 2) : yaml.dump(openApi));
     }
 
     patchOpenApiVersion(openApi) {
