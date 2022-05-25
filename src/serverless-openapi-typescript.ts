@@ -162,20 +162,19 @@ export default class ServerlessOpenapiTypeScript {
                         responseModels: { 'application/json': responseModelName }
                     }
                 ]);
+        }
+        const queryParamModel = `${definitionPrefix}.Request.QueryParams`;
+        try {
+            this.setModel(queryParamModel);
+        } catch (e) {
+            this.log(`Skipped generation of "${queryParamModel}" - model is missing - will be using the default query param of type string`);
+        }
 
-                const queryParamModel = `${definitionPrefix}.Request.QueryParams`;
-                try {
-                    this.setModel(queryParamModel);
-                } catch (e) {
-                    this.log(`Skipped generation of "${queryParamModel}" - model is missing - will be using the default query param of type string`);
-                }
-
-                const pathParamModel = `${definitionPrefix}.Request.PathParams`;
-                try {
-                    this.setModel(pathParamModel);
-                } catch (e) {
-                    this.log(`Skipped generation of "${pathParamModel}" - model is missing - will be using the default path param of type string`);
-                }
+        const pathParamModel = `${definitionPrefix}.Request.PathParams`;
+        try {
+            this.setModel(pathParamModel);
+        } catch (e) {
+            this.log(`Skipped generation of "${pathParamModel}" - model is missing - will be using the default path param of type string`);
         }
     }
 
