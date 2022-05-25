@@ -167,14 +167,15 @@ export default class ServerlessOpenapiTypeScript {
                 try {
                     this.setModel(queryParamModel);
                 } catch (e) {
-                    this.log(`Skipped generation of "${queryParamModel}" - most a model is missing - will be using the default query param of type string`);
+                    this.log(`Skipped generation of "${queryParamModel}" - model is missing - will be using the default query param of type string`);
                 }
 
                 const pathParamModel = `${definitionPrefix}.Request.PathParams`;
                 try {
-                    this.log(`Skipped generation of "${pathParamModel}" - most a model is missing - will be using the default path param of type string`);
                     this.setModel(pathParamModel);
-                } catch (e) {}
+                } catch (e) {
+                    this.log(`Skipped generation of "${pathParamModel}" - model is missing - will be using the default path param of type string`);
+                }
         }
     }
 
