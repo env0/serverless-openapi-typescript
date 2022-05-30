@@ -8,7 +8,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "ts-json-schema-generator": "^0.95.0",
+    "ts-json-schema-generator": "^1.0.0",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21"
   },
