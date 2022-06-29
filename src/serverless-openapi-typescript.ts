@@ -163,6 +163,19 @@ export default class ServerlessOpenapiTypeScript {
                     }
                 ]);
         }
+        const queryParamModel = `${definitionPrefix}.Request.QueryParams`;
+        try {
+            this.setModel(queryParamModel);
+        } catch (e) {
+            this.log(`Skipped generation of "${queryParamModel}" - model is missing - will be using the default query param of type string`);
+        }
+
+        const pathParamModel = `${definitionPrefix}.Request.PathParams`;
+        try {
+            this.setModel(pathParamModel);
+        } catch (e) {
+            this.log(`Skipped generation of "${pathParamModel}" - model is missing - will be using the default path param of type string`);
+        }
     }
 
     postProcessOpenApi() {
@@ -171,7 +184,7 @@ export default class ServerlessOpenapiTypeScript {
         const openApi = yaml.load(fs.readFileSync(outputFile));
         this.patchOpenApiVersion(openApi);
         this.tagMethods(openApi);
-        fs.writeFileSync(outputFile, yaml.dump(openApi));
+        fs.writeFileSync(outputFile, outputFile.endsWith('json') ? JSON.stringify(openApi, null, 2) : yaml.dump(openApi));
     }
 
     patchOpenApiVersion(openApi) {
