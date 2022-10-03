@@ -10,11 +10,11 @@ components:
 info:
   title: Project
   description: DummyDescription
-  version: 4f0acb77-25ef-4f4e-a15b-e2696b18a94c
+  version: d38df688-2143-4242-aa41-8747b2fcc63f
 paths:
   /create:
     post:
-      operationId: serverless-openapi-typescript-demo-createFunc
+      operationId: project-createfunc
       summary: Create Function
       description: |
         Create Function1
@@ -38,7 +38,7 @@ paths:
         - FooBarTitle
   /delete:
     delete:
-      operationId: serverless-openapi-typescript-demo-deleteFunc
+      operationId: project-deletefunc
       summary: Delete Function
       description: Delete
       parameters: []
@@ -50,7 +50,7 @@ paths:
         - Project
   /get:
     get:
-      operationId: serverless-openapi-typescript-demo-getFunc
+      operationId: project-getfunc
       summary: Get Function
       parameters: []
       responses:

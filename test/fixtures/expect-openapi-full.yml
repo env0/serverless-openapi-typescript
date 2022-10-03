@@ -106,11 +106,11 @@ info:
 
 
     More on https://google.com
-  version: 30e4ec2e-7e49-4cd8-bc49-c988ddbe3b3e
+  version: 0dd53b2b-f2b7-4183-a465-90941dc4f5c9
 paths:
   /create/{funcName}:
     post:
-      operationId: serverless-openapi-typescript-demo-createFunc
+      operationId: project-createfunc
       summary: Create Function
       description: |
         Create Function1
@@ -164,7 +164,7 @@ paths:
         - Project
   /delete/{funcName}:
     delete:
-      operationId: serverless-openapi-typescript-demo-deleteFunc
+      operationId: project-deletefunc
       summary: Delete Function
       description: Delete
       parameters:
@@ -182,7 +182,7 @@ paths:
         - Project
   /update:
     put:
-      operationId: serverless-openapi-typescript-demo-updateFunc
+      operationId: project-updatefunc
       summary: Delete Function
       description: Delete
       requestBody:
@@ -203,7 +203,7 @@ paths:
         - Project
   /get/{funcName}:
     get:
-      operationId: serverless-openapi-typescript-demo-getFunc
+      operationId: project-getfunc
       summary: Get Function
       parameters:
         - name: funcName
