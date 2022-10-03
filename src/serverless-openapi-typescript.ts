@@ -2,7 +2,7 @@ import type Serverless from "serverless";
 import fs from "fs";
 import yaml from "js-yaml";
 import {SchemaGenerator, createGenerator} from "ts-json-schema-generator";
-import {upperFirst, camelCase, mergeWith, set, isArray, get, isEmpty, unset, isString} from "lodash" ;
+import {upperFirst, camelCase, mergeWith, set, isArray, get, isEmpty, isString} from "lodash" ;
 import {ApiGatewayEvent} from "serverless/plugins/aws/package/compile/events/apiGateway/lib/validate";
 import { mapKeysDeep, mapValuesDeep} from 'deepdash/standalone'
 
