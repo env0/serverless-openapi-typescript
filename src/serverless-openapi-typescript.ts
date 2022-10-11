@@ -189,17 +189,19 @@ export default class ServerlessOpenapiTypeScript {
         fs.writeFileSync(outputFile, outputFile.endsWith('json') ? JSON.stringify(encodedOpenAPI, null, 2) : yaml.dump(encodedOpenAPI));
     }
 
+    // OpenApi spec define ^[a-zA-Z0-9\.\-_]+$ for legal fields - https://spec.openapis.org/oas/v3.1.0#components-object
+    // ts-json-schema-generator - create fields with <,> for generic types and encode them in the ref
     encodeOpenApiToStandard(openApi) {
         const INVALID_CHARACTERS_KEY = /<|>/g;
-        const INVALID_CHARACTERS_REF = /%3C|%3E/g;
+        const INVALID_CHARACTERS_ENCODED = /%3C|%3E/g; // %3C = <, %3E = >
 
         const mapObject = mapKeysDeep(openApi, (value, key) =>
             INVALID_CHARACTERS_KEY.test(key) ? key.replace(INVALID_CHARACTERS_KEY, '_') : key
         );
 
         return mapValuesDeep(mapObject, (value, key) =>
-            isString(value) && key === '$ref' && INVALID_CHARACTERS_REF.test(value) ?
-                value.replace(INVALID_CHARACTERS_REF, '_') : value
+            key === '$ref' && INVALID_CHARACTERS_ENCODED.test(value) ?
+                value.replace(INVALID_CHARACTERS_ENCODED, '_') : value
         );
     }
 
