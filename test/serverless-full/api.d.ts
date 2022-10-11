@@ -7,6 +7,7 @@ export namespace ProjectApi {
     export type Bool = 'true' | 'false';
     export type Number = number
     export type String = string;
+    export type GenericType<T> = T[];
 
     export namespace CreateFunc {
         export namespace Request {
@@ -21,6 +22,7 @@ export namespace ProjectApi {
         export type Response = {
             id: string;
             uuid: string;
+            generic: GenericType<{ key: string, name: number}>;
         };
     }
 

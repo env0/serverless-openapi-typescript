@@ -35,9 +35,13 @@ components:
           type: string
         uuid:
           type: string
+        generic:
+          $ref: >-
+            #/components/schemas/ProjectApi.GenericType_structure-1448918441-633-661-1448918441-620-662-1448918441-599-663-1448918441-547-673-1448918441-515-674-1448918441-283-680-1448918441-250-680-1448918441-104-1213-1448918441-75-1213-1448918441-0-1214_
       required:
         - id
         - uuid
+        - generic
       additionalProperties: false
     ProjectApi.UpdateFunc.Request.Body:
       type: object
@@ -66,6 +70,19 @@ components:
       required:
         - data
       additionalProperties: false
+    ProjectApi.GenericType_structure-1448918441-633-661-1448918441-620-662-1448918441-599-663-1448918441-547-673-1448918441-515-674-1448918441-283-680-1448918441-250-680-1448918441-104-1213-1448918441-75-1213-1448918441-0-1214_:
+      type: array
+      items:
+        type: object
+        properties:
+          key:
+            type: string
+          name:
+            type: number
+        required:
+          - key
+          - name
+        additionalProperties: false
 info:
   title: Project
   description: >
@@ -89,11 +106,10 @@ info:
 
 
     More on https://google.com
-  version: 633016ae-c93a-44ee-9162-b3befc3b722a
 paths:
   /create/{funcName}:
     post:
-      operationId: createFunc
+      operationId: project-create-func
       summary: Create Function
       description: |
         Create Function1
@@ -147,7 +163,7 @@ paths:
         - Project
   /delete/{funcName}:
     delete:
-      operationId: deleteFunc
+      operationId: project-delete-func
       summary: Delete Function
       description: Delete
       parameters:
@@ -165,7 +181,7 @@ paths:
         - Project
   /update:
     put:
-      operationId: updateFunc
+      operationId: project-update-func
       summary: Delete Function
       description: Delete
       requestBody:
@@ -186,7 +202,7 @@ paths:
         - Project
   /get/{funcName}:
     get:
-      operationId: getFunc
+      operationId: project-get-func
       summary: Get Function
       parameters:
         - name: funcName

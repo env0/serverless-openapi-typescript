@@ -2,8 +2,9 @@ import type Serverless from "serverless";
 import fs from "fs";
 import yaml from "js-yaml";
 import {SchemaGenerator, createGenerator} from "ts-json-schema-generator";
-import {upperFirst, camelCase, mergeWith, set, isArray, get, isEmpty } from "lodash" ;
+import {upperFirst, camelCase, mergeWith, set, isArray, get, isEmpty, kebabCase} from "lodash" ;
 import {ApiGatewayEvent} from "serverless/plugins/aws/package/compile/events/apiGateway/lib/validate";
+import { mapKeysDeep, mapValuesDeep} from 'deepdash/standalone'
 
 interface Options {
     typescriptApiPath?: string;
@@ -183,8 +184,25 @@ export default class ServerlessOpenapiTypeScript {
         const outputFile = this.serverless.processedInput.options.output;
         const openApi = yaml.load(fs.readFileSync(outputFile));
         this.patchOpenApiVersion(openApi);
-        this.tagMethods(openApi);
-        fs.writeFileSync(outputFile, outputFile.endsWith('json') ? JSON.stringify(openApi, null, 2) : yaml.dump(openApi));
+        this.enrichMethodsInfo(openApi);
+        const encodedOpenAPI = this.encodeOpenApiToStandard(openApi);
+        fs.writeFileSync(outputFile, outputFile.endsWith('json') ? JSON.stringify(encodedOpenAPI, null, 2) : yaml.dump(encodedOpenAPI));
+    }
+
+    // OpenApi spec define ^[a-zA-Z0-9\.\-_]+$ for legal fields - https://spec.openapis.org/oas/v3.1.0#components-object
+    // ts-json-schema-generator - create fields with <,> for generic types and encode them in the ref
+    encodeOpenApiToStandard(openApi) {
+        const INVALID_CHARACTERS_KEY = /<|>/g;
+        const INVALID_CHARACTERS_ENCODED = /%3C|%3E/g; // %3C = <, %3E = >
+
+        const mapObject = mapKeysDeep(openApi, (value, key) =>
+            INVALID_CHARACTERS_KEY.test(key) ? key.replace(INVALID_CHARACTERS_KEY, '_') : key
+        );
+
+        return mapValuesDeep(mapObject, (value, key) =>
+            key === '$ref' && INVALID_CHARACTERS_ENCODED.test(value) ?
+                value.replace(INVALID_CHARACTERS_ENCODED, '_') : value
+        );
     }
 
     patchOpenApiVersion(openApi) {
@@ -193,8 +211,7 @@ export default class ServerlessOpenapiTypeScript {
         return openApi;
     }
 
-    tagMethods(openApi) {
-
+    enrichMethodsInfo(openApi) {
         const tagName = openApi.info.title;
         openApi.tags = [
             {
@@ -216,6 +233,8 @@ export default class ServerlessOpenapiTypeScript {
                 } else {
                     method.tags = [tagName];
                 }
+
+                method.operationId = kebabCase(`${this.serverless.service.custom?.documentation?.title}-${method.operationId}`);
             });
         });
     }
