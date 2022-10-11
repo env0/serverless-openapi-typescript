@@ -106,11 +106,10 @@ info:
 
 
     More on https://google.com
-  version: 0dd53b2b-f2b7-4183-a465-90941dc4f5c9
 paths:
   /create/{funcName}:
     post:
-      operationId: project-createfunc
+      operationId: project-create-func
       summary: Create Function
       description: |
         Create Function1
@@ -164,7 +163,7 @@ paths:
         - Project
   /delete/{funcName}:
     delete:
-      operationId: project-deletefunc
+      operationId: project-delete-func
       summary: Delete Function
       description: Delete
       parameters:
@@ -182,7 +181,7 @@ paths:
         - Project
   /update:
     put:
-      operationId: project-updatefunc
+      operationId: project-update-func
       summary: Delete Function
       description: Delete
       requestBody:
@@ -203,7 +202,7 @@ paths:
         - Project
   /get/{funcName}:
     get:
-      operationId: project-getfunc
+      operationId: project-get-func
       summary: Get Function
       parameters:
         - name: funcName

@@ -2,7 +2,7 @@ import type Serverless from "serverless";
 import fs from "fs";
 import yaml from "js-yaml";
 import {SchemaGenerator, createGenerator} from "ts-json-schema-generator";
-import {upperFirst, camelCase, mergeWith, set, isArray, get, isEmpty, isString, toLower} from "lodash" ;
+import {upperFirst, camelCase, mergeWith, set, isArray, get, isEmpty, kebabCase} from "lodash" ;
 import {ApiGatewayEvent} from "serverless/plugins/aws/package/compile/events/apiGateway/lib/validate";
 import { mapKeysDeep, mapValuesDeep} from 'deepdash/standalone'
 
@@ -234,7 +234,7 @@ export default class ServerlessOpenapiTypeScript {
                     method.tags = [tagName];
                 }
 
-                method.operationId = toLower(`${this.serverless.service.custom?.documentation?.title}-${method.operationId}`);
+                method.operationId = kebabCase(`${this.serverless.service.custom?.documentation?.title}-${method.operationId}`);
             });
         });
     }

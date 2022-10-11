@@ -10,7 +10,6 @@ components:
 info:
   title: Project
   description: DummyDescription
-  version: fb7739b4-24ec-49fa-b939-19640b1011bc
 paths:
   /create:
     post:
@@ -50,7 +49,7 @@ paths:
         - Project
   /get:
     get:
-      operationId: project-get_func
+      operationId: project-get-func
       summary: Get Function
       parameters: []
       responses:

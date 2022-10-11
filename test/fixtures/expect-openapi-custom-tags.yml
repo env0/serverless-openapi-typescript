@@ -10,11 +10,10 @@ components:
 info:
   title: Project
   description: DummyDescription
-  version: d38df688-2143-4242-aa41-8747b2fcc63f
 paths:
   /create:
     post:
-      operationId: project-createfunc
+      operationId: project-create-func
       summary: Create Function
       description: |
         Create Function1
@@ -38,7 +37,7 @@ paths:
         - FooBarTitle
   /delete:
     delete:
-      operationId: project-deletefunc
+      operationId: project-delete-func
       summary: Delete Function
       description: Delete
       parameters: []
@@ -50,7 +49,7 @@ paths:
         - Project
   /get:
     get:
-      operationId: project-getfunc
+      operationId: project-get-func
       summary: Get Function
       parameters: []
       responses:
