@@ -14,7 +14,7 @@ info:
 paths:
   /get:
     get:
-      operationId: func
+      operationId: func-get
       summary: Get Function
       parameters:
         - name: name

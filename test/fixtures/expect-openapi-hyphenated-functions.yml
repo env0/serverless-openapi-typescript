@@ -13,7 +13,7 @@ info:
 paths:
   /create:
     post:
-      operationId: project-create-func
+      operationId: project-create-func-post
       summary: Create Function
       description: |
         Create Function1
@@ -37,7 +37,7 @@ paths:
         - FooBarTitle
   /delete:
     delete:
-      operationId: project-delete-all-func
+      operationId: project-delete-all-func-delete
       summary: Delete Function
       description: Delete
       parameters: []
@@ -49,7 +49,7 @@ paths:
         - Project
   /get:
     get:
-      operationId: project-get-func
+      operationId: project-get-func-get
       summary: Get Function
       parameters: []
       responses:
