@@ -224,7 +224,8 @@ export default class ServerlessOpenapiTypeScript {
 
         Object.values(openApi.paths).forEach(path => {
             Object.entries(path).forEach(([methodName, method]) => {
-                const httpEvent = this.functions[method.operationId]?.events?.find(
+                const httpEvents = this.functions[method.operationId]?.events;
+                const httpEvent = httpEvents?.find(
                     (e: ApiGatewayEvent) => (e.http as any).method === methodName
                 ) as ApiGatewayEvent;
                 const http: HttpEvent = httpEvent.http;
@@ -234,7 +235,7 @@ export default class ServerlessOpenapiTypeScript {
                     method.tags = [tagName];
                 }
 
-                method.operationId = kebabCase(`${this.serverless.service.custom?.documentation?.title}-${method.operationId}-${methodName}`);
+                method.operationId = kebabCase(`${this.serverless.service.custom?.documentation?.title}-${method.operationId}${httpEvents.length > 1 ? `-${methodName}`: ''}`);
             });
         });
     }

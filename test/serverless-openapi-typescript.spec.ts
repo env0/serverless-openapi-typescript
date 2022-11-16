@@ -16,6 +16,7 @@ describe('ServerlessOpenapiTypeScript', () => {
     ${'Custom Tags'}  | ${'custom-tags'}
     ${'Hyphenated Functions'}  | ${'hyphenated-functions'}
     ${'Full Project'} | ${'full'}
+    ${'Trigger Events List'}|${'trigger-events-list'}
     `('when using $testCase', ({projectName}) => {
 
         beforeEach(async () => {

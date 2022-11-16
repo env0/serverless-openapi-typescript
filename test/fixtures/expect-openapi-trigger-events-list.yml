@@ -37,7 +37,7 @@ components:
           type: string
         generic:
           $ref: >-
-            #/components/schemas/ProjectApi.GenericType_structure-1448918441-633-661-1448918441-620-662-1448918441-599-663-1448918441-547-673-1448918441-515-674-1448918441-283-680-1448918441-250-680-1448918441-104-1213-1448918441-75-1213-1448918441-0-1214_
+            #/components/schemas/ProjectApi.GenericType_structure-1660319619-633-661-1660319619-620-662-1660319619-599-663-1660319619-547-673-1660319619-515-674-1660319619-283-680-1660319619-250-680-1660319619-104-1213-1660319619-75-1213-1660319619-0-1214_
       required:
         - id
         - uuid
@@ -70,7 +70,7 @@ components:
       required:
         - data
       additionalProperties: false
-    ProjectApi.GenericType_structure-1448918441-633-661-1448918441-620-662-1448918441-599-663-1448918441-547-673-1448918441-515-674-1448918441-283-680-1448918441-250-680-1448918441-104-1213-1448918441-75-1213-1448918441-0-1214_:
+    ProjectApi.GenericType_structure-1660319619-633-661-1660319619-620-662-1660319619-599-663-1660319619-547-673-1660319619-515-674-1660319619-283-680-1660319619-250-680-1660319619-104-1213-1660319619-75-1213-1660319619-0-1214_:
       type: array
       items:
         type: object
@@ -181,7 +181,27 @@ paths:
         - Project
   /update:
     put:
-      operationId: project-update-func
+      operationId: project-update-func-put
+      summary: Delete Function
+      description: Delete
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectApi.UpdateFunc.Request.Body'
+        description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectApi.UpdateFunc.Response'
+      tags:
+        - Project
+    post:
+      operationId: project-update-func-post
       summary: Delete Function
       description: Delete
       requestBody:
