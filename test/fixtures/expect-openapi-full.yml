@@ -109,7 +109,7 @@ info:
 paths:
   /create/{funcName}:
     post:
-      operationId: project-create-func-post
+      operationId: project-create-func
       summary: Create Function
       description: |
         Create Function1
@@ -163,7 +163,7 @@ paths:
         - Project
   /delete/{funcName}:
     delete:
-      operationId: project-delete-func-delete
+      operationId: project-delete-func
       summary: Delete Function
       description: Delete
       parameters:
@@ -181,7 +181,7 @@ paths:
         - Project
   /update:
     put:
-      operationId: project-update-func-put
+      operationId: project-update-func
       summary: Delete Function
       description: Delete
       requestBody:
@@ -202,7 +202,7 @@ paths:
         - Project
   /get/{funcName}:
     get:
-      operationId: project-get-func-get
+      operationId: project-get-func
       summary: Get Function
       parameters:
         - name: funcName
