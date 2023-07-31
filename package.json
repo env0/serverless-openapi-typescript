@@ -1,7 +1,7 @@
 {
   "name": "serverless-openapi-typescript",
   "version": "2.0.0",
-  "description": "An extension of @conqa/serverless-openapi-documentation that also generates your OpenAPI models from TypeScript",
+  "description": "An extension of serverless-openapi-documenter that also generates your OpenAPI models from TypeScript",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
@@ -14,16 +14,16 @@
     "ts-json-schema-generator": "^1.1.2"
   },
   "devDependencies": {
-    "@conqa/serverless-openapi-documentation": "^1.1.0",
     "@types/jest": "^27.0.1",
     "@types/serverless": "^1.78.35",
     "jest": "^27.0.6",
     "serverless": "^2.56.0",
+    "serverless-openapi-documenter": "^0.0.67",
     "ts-jest": "^27.0.5",
     "typescript": "^4.4.2"
   },
   "peerDependencies": {
-    "@conqa/serverless-openapi-documentation": "^1.1.0",
+    "serverless-openapi-documenter": "^0.0.67",
     "serverless": "^2.56.0"
   },
   "keywords": [],

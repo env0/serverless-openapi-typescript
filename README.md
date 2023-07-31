@@ -444,13 +444,13 @@ To add these plugins to your package.json:
 
 **Using npm:**
 ```bash
-npm install @conqa/serverless-openapi-documentation --save-dev
+npm install serverless-openapi-documenter --save-dev
 npm install serverless-openapi-typescript --save-dev
 ```
 
 **Using Yarn:**
 ```bash
-yarn add @conqa/serverless-openapi-documentation --dev
+yarn add serverless-openapi-documenter --dev
 yarn add serverless-openapi-typescript --dev
 ```
 
@@ -458,9 +458,9 @@ Next you need to add the plugin to the `plugins` section of your `serverless.yml
 
 ```yml
 plugins:
-  - @conqa/serverless-openapi-documentation
+  - serverless-openapi-documenter
   - serverless-openapi-typescript
-  # NOTE: Order is important here - this plugin must be added after the base @conqa/serverless-openapi-documentation plugin
+  # NOTE: Order is important here - this plugin must be added after the base serverless-openapi-documenter plugin
   # This plugin asserts that - you will get a validation message if you get the ordering wrong 
 ```
 

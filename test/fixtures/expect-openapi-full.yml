@@ -1,18 +1,6 @@
 openapi: 3.1.0
 components:
   schemas:
-    ObjectType:
-      type: object
-      properties:
-        types:
-          type: array
-          items:
-            type: string
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/ObjectType'
-      additionalProperties: false
     ProjectApi.CreateFunc.Request.Body:
       type: object
       properties:
@@ -23,7 +11,17 @@ components:
         enable:
           type: boolean
         object:
-          $ref: '#/components/schemas/ObjectType'
+          type: object
+          properties:
+            types:
+              type: array
+              items:
+                type: string
+            children:
+              type: array
+              items:
+                type: string
+          additionalProperties: false
       required:
         - data
         - enable
@@ -36,8 +34,18 @@ components:
         uuid:
           type: string
         generic:
-          $ref: >-
-            #/components/schemas/ProjectApi.GenericType_structure-1448918441-633-661-1448918441-620-662-1448918441-599-663-1448918441-547-673-1448918441-515-674-1448918441-283-680-1448918441-250-680-1448918441-104-1213-1448918441-75-1213-1448918441-0-1214_
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              name:
+                type: number
+            required:
+              - key
+              - name
+            additionalProperties: false
       required:
         - id
         - uuid
@@ -70,19 +78,21 @@ components:
       required:
         - data
       additionalProperties: false
-    ProjectApi.GenericType_structure-1448918441-633-661-1448918441-620-662-1448918441-599-663-1448918441-547-673-1448918441-515-674-1448918441-283-680-1448918441-250-680-1448918441-104-1213-1448918441-75-1213-1448918441-0-1214_:
-      type: array
-      items:
-        type: object
-        properties:
-          key:
-            type: string
-          name:
-            type: number
-        required:
-          - key
-          - name
-        additionalProperties: false
+    funcName:
+      type: string
+    param1:
+      type: string
+      enum:
+        - 'true'
+        - 'false'
+    param2:
+      type: string
+    param3:
+      type: number
+    81596439-293f-4ad7-a230-c36739d94544:
+      type: string
+      properties: ''
+
 info:
   title: Project
   description: >
@@ -109,49 +119,49 @@ info:
 paths:
   /create/{funcName}:
     post:
-      operationId: project-create-func
       summary: Create Function
       description: |
         Create Function1
         Create Function2
         Create Function3
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProjectApi.CreateFunc.Request.Body'
-        description: ''
+      operationId: serverless-openapi-typescript-demo-dev-create-func
       parameters:
         - name: funcName
           in: path
           description: ''
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/funcName'
         - name: param1
           in: query
           description: Param 1
           required: false
           allowEmptyValue: false
           schema:
-            type: string
-            enum:
-              - 'true'
-              - 'false'
+            $ref: '#/components/schemas/param1'
         - name: param2
           in: query
           description: Param 2
           required: true
           allowEmptyValue: false
           schema:
-            type: string
+            $ref: '#/components/schemas/param2'
         - name: param3
           in: query
           description: Param 3
           required: false
           allowEmptyValue: false
           schema:
-            type: number
+            $ref: '#/components/schemas/param3'
+      tags:
+        - Project
+      requestBody:
+        description: ''
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectApi.CreateFunc.Request.Body'
       responses:
         '200':
           description: ''
@@ -159,38 +169,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProjectApi.CreateFunc.Response'
-      tags:
-        - Project
+          headers: {}
   /delete/{funcName}:
     delete:
-      operationId: project-delete-func
       summary: Delete Function
       description: Delete
+      operationId: serverless-openapi-typescript-demo-dev-delete-func
       parameters:
         - name: funcName
           in: path
           description: ''
           required: true
           schema:
-            type: string
-      responses:
-        '204':
-          description: Status 204 Response
-          content: {}
+            $ref: '#/components/schemas/funcName'
       tags:
         - Project
+      responses:
+        '204':
+          description: Mocked response for the delete endpoint.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/81596439-293f-4ad7-a230-c36739d94544'
+          headers: {}
   /update:
     put:
-      operationId: project-update-func
-      summary: Delete Function
-      description: Delete
+      summary: Update Function
+      description: Update
+      operationId: serverless-openapi-typescript-demo-dev-update-func
+      parameters: []
+      tags:
+        - Project
       requestBody:
+        description: ''
+        required: false
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ProjectApi.UpdateFunc.Request.Body'
-        description: ''
-      parameters: []
       responses:
         '200':
           description: ''
@@ -198,19 +214,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProjectApi.UpdateFunc.Response'
-      tags:
-        - Project
+          headers: {}
   /get/{funcName}:
     get:
-      operationId: project-get-func
       summary: Get Function
+      description: ''
+      operationId: serverless-openapi-typescript-demo-dev-get-func
       parameters:
         - name: funcName
           in: path
           description: ''
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/funcName'
+      tags:
+        - Project
       responses:
         '200':
           description: ''
@@ -218,8 +236,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProjectApi.GetFunc.Response'
-      tags:
-        - Project
+          headers: {}
 tags:
   - name: Project
     description: >

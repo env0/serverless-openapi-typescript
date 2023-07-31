@@ -3,7 +3,7 @@ provider:
   name: aws
 
 plugins:
-  - ../node_modules/@conqa/serverless-openapi-documentation
+  - ../node_modules/serverless-openapi-documenter
   - ../src/index
 
 custom:

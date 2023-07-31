@@ -3,7 +3,7 @@ provider:
   name: aws
 
 plugins:
-  - ../node_modules/@conqa/serverless-openapi-documentation
+  - ../node_modules/serverless-openapi-documenter
   - ../src/index
 
 custom:
@@ -36,12 +36,15 @@ functions:
               - name: 'param1'
                 description: 'Param 1'
                 schema: 'ProjectApi.Bool'
+                allowEmptyValue: false
               - name: 'param2'
                 description: 'Param 2'
                 schema: 'ProjectApi.String'
+                allowEmptyValue: false
               - name: 'param3'
                 description: 'Param 3'
                 schema: 'ProjectApi.Number'
+                allowEmptyValue: false
           path: create/{funcName}
           method: post
           request:
@@ -72,13 +75,13 @@ functions:
     events:
       - http:
           documentation:
-            summary: "Delete Function"
-            description: "Delete"
+            summary: "Update Function"
+            description: "Update"
           path: update
           method: put
 
   getFunc:
-    handler: handler.update
+    handler: handler.get
     events:
       - http:
           documentation:

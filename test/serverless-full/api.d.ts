@@ -1,6 +1,6 @@
 interface ObjectType {
     types?: string[];
-    children?: ObjectType[];
+    children?: string[];
 }
 
 export namespace ProjectApi {

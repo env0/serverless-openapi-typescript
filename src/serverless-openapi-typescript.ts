@@ -2,7 +2,7 @@ import type Serverless from "serverless";
 import fs from "fs";
 import yaml from "js-yaml";
 import {SchemaGenerator, createGenerator} from "ts-json-schema-generator";
-import {upperFirst, camelCase, mergeWith, set, isArray, get, isEmpty, kebabCase} from "lodash" ;
+import {upperFirst, camelCase, mergeWith, set, isArray, get, isEmpty, kebabCase, find} from "lodash" ;
 import {ApiGatewayEvent} from "serverless/plugins/aws/package/compile/events/apiGateway/lib/validate";
 import { mapKeysDeep, mapValuesDeep} from 'deepdash/standalone'
 
@@ -55,7 +55,7 @@ export default class ServerlessOpenapiTypeScript {
     assertPluginOrder() {
         if (!this.serverless.pluginManager.hooks['openapi:generate:serverless']) {
             throw new Error(
-                'Please configure your serverless.plugins list so serverless-openapi-typescript will be listed AFTER @conqa/serverless-openapi-documentation'
+                'Please configure your serverless.plugins list so serverless-openapi-typescript will be listed AFTER serverless-openapi-documenter'
             );
         }
     }
@@ -143,7 +143,19 @@ export default class ServerlessOpenapiTypeScript {
         const method = httpEvent.method.toLowerCase();
         switch (method) {
             case 'delete':
-                set(httpEvent, 'documentation.methodResponses', [{ statusCode: 204, responseModels: {} }]);
+                set(httpEvent, 'documentation.methodResponses', [{ statusCode: 204,
+                    responseBody: { description: "Mocked response for the delete endpoint."},
+                    responseModels:
+                        {
+                            'application/json': {
+                                schema: {
+                                    type: "string",
+                                    properties: ""
+                                }
+                            }
+                        }
+
+                }]);
                 break;
             case 'patch':
             case 'put':
@@ -224,17 +236,20 @@ export default class ServerlessOpenapiTypeScript {
 
         Object.values(openApi.paths).forEach(path => {
             Object.values(path).forEach(method => {
-                const httpEvent = this.functions[method.operationId]?.events?.find(
-                    (e: ApiGatewayEvent) => e.http
-                ) as ApiGatewayEvent;
-                const http: HttpEvent = httpEvent.http;
-                if (http.documentation?.tag) {
-                    method.tags = [http.documentation.tag];
-                } else {
-                    method.tags = [tagName];
+                const matchingFunction = find(this.functions, (func) => func.name === method.operationId);
+                if (matchingFunction) {
+                    const httpEvent = matchingFunction.events?.find(
+                        (e: ApiGatewayEvent) => e.http
+                    ) as ApiGatewayEvent;
+                    const http: HttpEvent = httpEvent.http;
+                    if (http.documentation?.tag) {
+                        method.tags = [http.documentation.tag];
+                    } else {
+                        method.tags = [tagName];
+                    }
                 }
 
-                method.operationId = kebabCase(`${this.serverless.service.custom?.documentation?.title}-${method.operationId}`);
+                method.operationId = kebabCase(method.operationId);
             });
         });
     }

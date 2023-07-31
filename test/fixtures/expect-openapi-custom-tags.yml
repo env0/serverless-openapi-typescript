@@ -2,30 +2,36 @@ openapi: 3.1.0
 components:
   schemas:
     ProjectApi.CreateFunc.Request.Body:
-      type: 'null'
+      nullable: true
     ProjectApi.CreateFunc.Response:
-      type: 'null'
+      nullable: true
     ProjectApi.GetFunc.Response:
-      type: 'null'
+      nullable: true
+    81596439-293f-4ad7-a230-c36739d94544:
+      type: string
+      properties: ''
 info:
   title: Project
   description: DummyDescription
 paths:
   /create:
     post:
-      operationId: project-create-func
       summary: Create Function
       description: |
         Create Function1
         Create Function2
         Create Function3
+      operationId: serverless-openapi-typescript-demo-dev-create-func
+      parameters: []
+      tags:
+        - FooBarTitle
       requestBody:
+        description: ''
+        required: false
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ProjectApi.CreateFunc.Request.Body'
-        description: ''
-      parameters: []
       responses:
         '200':
           description: ''
@@ -33,25 +39,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProjectApi.CreateFunc.Response'
-      tags:
-        - FooBarTitle
+          headers: {}
   /delete:
     delete:
-      operationId: project-delete-func
       summary: Delete Function
       description: Delete
+      operationId: serverless-openapi-typescript-demo-dev-delete-func
       parameters: []
-      responses:
-        '204':
-          description: Status 204 Response
-          content: {}
       tags:
         - Project
+      responses:
+        '204':
+          description: Mocked response for the delete endpoint.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/81596439-293f-4ad7-a230-c36739d94544'
+          headers: {}
   /get:
     get:
-      operationId: project-get-func
       summary: Get Function
+      description: ''
+      operationId: serverless-openapi-typescript-demo-dev-get-func
       parameters: []
+      tags:
+        - BazTitle
       responses:
         '200':
           description: ''
@@ -59,8 +71,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProjectApi.GetFunc.Response'
-      tags:
-        - BazTitle
+          headers: {}
 tags:
   - name: Project
     description: DummyDescription

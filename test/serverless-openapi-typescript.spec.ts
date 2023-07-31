@@ -18,6 +18,8 @@ describe('ServerlessOpenapiTypeScript', () => {
     ${'Full Project'} | ${'full'}
     `('when using $testCase', ({projectName}) => {
 
+        jest.mock('uuid');
+
         beforeEach(async () => {
             await deleteOutputFile(projectName);
         });
@@ -33,7 +35,7 @@ describe('ServerlessOpenapiTypeScript', () => {
         const projectName = 'without-openapi';
 
         it('should throw an error when serverless-openapi-documentation not loaded before', async () => {
-            await expect(runOpenApiGenerate(projectName)).rejects.toEqual(new Error('Please configure your serverless.plugins list so serverless-openapi-typescript will be listed AFTER @conqa/serverless-openapi-documentation'));
+            await expect(runOpenApiGenerate(projectName)).rejects.toEqual(new Error('Please configure your serverless.plugins list so serverless-openapi-typescript will be listed AFTER serverless-openapi-documenter'));
         });
     });
 
@@ -68,8 +70,8 @@ async function assertYamlFilesEquals(projectName: string): Promise<void> {
     const outputFile = `openapi-${projectName}.yml`;
     const expectFile = `test/fixtures/expect-openapi-${projectName}.yml`;
 
-    const [actualOutput, expectOutput] = await Promise.all([processYamlFileForTest(expectFile), processYamlFileForTest(outputFile)]);
-    expect(expectOutput).toEqual(actualOutput);
+    const [expectOutput, actualOutput] = await Promise.all([processYamlFileForTest(expectFile), processYamlFileForTest(outputFile)]);
+    expect(actualOutput).toEqual(expectOutput);
 }
 
 async function processYamlFileForTest(path: string): Promise<string> {
