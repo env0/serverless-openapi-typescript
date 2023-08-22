@@ -5,7 +5,9 @@ name: Publish
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - request-schema-validators
 
 jobs:
   publish:
