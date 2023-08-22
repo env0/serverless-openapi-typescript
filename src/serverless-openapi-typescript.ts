@@ -40,6 +40,7 @@ export default class ServerlessOpenapiTypeScript {
 
         if (!this.disable) {
             this.hooks = {
+                'before:package:createDeploymentArtifacts': this.callOpenApiGenerate.bind(this),
                 'before:openapi:generate:serverless': this.populateServerlessWithModels.bind(this),
                 'after:openapi:generate:serverless': this.postProcessOpenApi.bind(this)
             };
@@ -95,6 +96,10 @@ export default class ServerlessOpenapiTypeScript {
         });
 
         this.assertAllFunctionsDocumented();
+    }
+
+    private callOpenApiGenerate() {
+        this.serverless.pluginManager.spawn('openapi:generate');
     }
 
     assertAllFunctionsDocumented() {
@@ -173,7 +178,7 @@ export default class ServerlessOpenapiTypeScript {
                     'application/json': {
                         name: formatName(requestModelName),
                         schema: this.generateSchema(requestModelName),
-                        description: 'test schema'
+                        description: `Generated schema for ${requestModelName}`
                     }
                 });
             // no-break;
@@ -205,7 +210,7 @@ export default class ServerlessOpenapiTypeScript {
 
     postProcessOpenApi() {
         // @ts-ignore
-        const outputFile = this.serverless.processedInput.options.output;
+        const outputFile = this.serverless.processedInput.options.output || 'openapi.json';
         const openApi = yaml.load(fs.readFileSync(outputFile));
         this.patchOpenApiVersion(openApi);
         this.enrichMethodsInfo(openApi);
