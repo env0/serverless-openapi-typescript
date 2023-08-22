@@ -1,10 +1,10 @@
 import type Serverless from "serverless";
 import fs from "fs";
 import yaml from "js-yaml";
-import {SchemaGenerator, createGenerator} from "ts-json-schema-generator";
-import {upperFirst, camelCase, mergeWith, set, isArray, get, isEmpty, kebabCase, find} from "lodash" ;
+import {createGenerator, SchemaGenerator} from "ts-json-schema-generator";
+import {camelCase, find, get, isArray, isEmpty, kebabCase, mergeWith, set, upperFirst} from "lodash";
 import {ApiGatewayEvent} from "serverless/plugins/aws/package/compile/events/apiGateway/lib/validate";
-import { mapKeysDeep, mapValuesDeep} from 'deepdash/standalone'
+import {mapKeysDeep, mapValuesDeep} from 'deepdash/standalone'
 
 interface Options {
     typescriptApiPath?: string;
@@ -139,6 +139,8 @@ export default class ServerlessOpenapiTypeScript {
     }
 
     setModels(httpEvent, functionName) {
+        const formatName = (model: string): string => upperFirst(camelCase(model.replace(/\W+/g, '')));
+
         const definitionPrefix = `${this.serverless.service.custom.documentation.apiNamespace}.${upperFirst(camelCase(functionName))}`;
         const method = httpEvent.method.toLowerCase();
         switch (method) {
@@ -165,6 +167,15 @@ export default class ServerlessOpenapiTypeScript {
                 this.setModel(requestModelName);
                 set(httpEvent, 'documentation.requestModels', {'application/json': requestModelName});
                 set(httpEvent, 'documentation.requestBody', {description: ''});
+
+                // Set Request schema validators
+                set(httpEvent, 'request.schemas', {
+                    'application/json': {
+                        name: formatName(requestModelName),
+                        schema: this.generateSchema(requestModelName),
+                        description: 'test schema'
+                    }
+                });
             // no-break;
             case 'get':
                 const responseModelName = `${definitionPrefix}.Response`;
