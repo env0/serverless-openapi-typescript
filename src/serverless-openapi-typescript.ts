@@ -19,7 +19,7 @@ type HttpEvent = ApiGatewayEvent['http'] & {
 export default class ServerlessOpenapiTypeScript {
     private readonly functionsMissingDocumentation: string[];
     private readonly disable: boolean;
-    private hooks: { [hook: string]: () => {}};
+    private hooks: { [hook: string]: () => {} };
     private typescriptApiModelPath: string;
     private tsconfigPath: string;
     private schemaGenerator: SchemaGenerator;
@@ -82,9 +82,9 @@ export default class ServerlessOpenapiTypeScript {
                         const paths = get(httpEvent, 'request.parameters.paths', []);
                         const querystrings = get(httpEvent, 'request.parameters.querystrings', {});
                         [
-                            { params: paths, documentationKey: 'pathParams' },
-                            { params: querystrings, documentationKey: 'queryParams' }
-                        ].forEach(({ params, documentationKey }) => {
+                            {params: paths, documentationKey: 'pathParams'},
+                            {params: querystrings, documentationKey: 'queryParams'}
+                        ].forEach(({params, documentationKey}) => {
                             this.setDefaultParamsDocumentation(params, httpEvent, documentationKey);
                         });
                     } else if (httpEvent.documentation !== null && !httpEvent.private) {
@@ -126,7 +126,7 @@ export default class ServerlessOpenapiTypeScript {
             const paramDocumentationFromSls = {
                 name,
                 required,
-                schema: { type: 'string' }
+                schema: {type: 'string'}
             };
 
             if (!existingDocumentedParam) {
@@ -143,8 +143,9 @@ export default class ServerlessOpenapiTypeScript {
         const method = httpEvent.method.toLowerCase();
         switch (method) {
             case 'delete':
-                set(httpEvent, 'documentation.methodResponses', [{ statusCode: 204,
-                    responseBody: { description: "Mocked response for the delete endpoint."},
+                set(httpEvent, 'documentation.methodResponses', [{
+                    statusCode: 204,
+                    responseBody: {description: "Mocked response for the delete endpoint."},
                     responseModels:
                         {
                             'application/json': {
@@ -161,18 +162,18 @@ export default class ServerlessOpenapiTypeScript {
             case 'put':
             case 'post':
                 const requestModelName = `${definitionPrefix}.Request.Body`;
-                this.setModel(`${definitionPrefix}.Request.Body`);
-                set(httpEvent, 'documentation.requestModels', { 'application/json': requestModelName });
-                set(httpEvent, 'documentation.requestBody', { description: '' });
+                this.setModel(requestModelName);
+                set(httpEvent, 'documentation.requestModels', {'application/json': requestModelName});
+                set(httpEvent, 'documentation.requestBody', {description: ''});
             // no-break;
             case 'get':
                 const responseModelName = `${definitionPrefix}.Response`;
-                this.setModel(`${definitionPrefix}.Response`);
+                this.setModel(responseModelName);
                 set(httpEvent, 'documentation.methodResponses', [
                     {
                         statusCode: 200,
-                        responseBody: { description: '' },
-                        responseModels: { 'application/json': responseModelName }
+                        responseBody: {description: ''},
+                        responseModels: {'application/json': responseModelName}
                     }
                 ]);
         }
@@ -259,7 +260,7 @@ export default class ServerlessOpenapiTypeScript {
             this.serverless.service.custom,
             {
                 documentation: {
-                    models: [{ name: modelName, contentType: 'application/json', schema: this.generateSchema(modelName) }]
+                    models: [{name: modelName, contentType: 'application/json', schema: this.generateSchema(modelName)}]
                 }
             },
             (objValue, srcValue) => {
