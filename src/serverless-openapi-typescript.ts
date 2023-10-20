@@ -49,8 +49,8 @@ export default class ServerlessOpenapiTypeScript {
 
     initOptions(options) {
         this.options = options || {};
-        this.typescriptApiModelPath = this.options.typescriptApiPath || 'api.d.ts';
-        this.tsconfigPath = this.options.tsconfigPath || 'tsconfig.json';
+        this.typescriptApiModelPath = this.options.typescriptApiPath || this.serverless.service.custom.documentation.typescriptApiPath || 'api.d.ts';
+        this.tsconfigPath = this.options.tsconfigPath || this.serverless.service.custom.documentation.tsconfigPath || 'tsconfig.json';
     }
 
     assertPluginOrder() {
