@@ -15,6 +15,7 @@ describe('ServerlessOpenapiTypeScript', () => {
     testCase         | projectName
     ${'Custom Tags'}  | ${'custom-tags'}
     ${'Hyphenated Functions'}  | ${'hyphenated-functions'}
+    ${'Const replacement post processor'}  | ${'const-replacement'}
     ${'Full Project'} | ${'full'}
     `('when using $testCase', ({projectName}) => {
 
