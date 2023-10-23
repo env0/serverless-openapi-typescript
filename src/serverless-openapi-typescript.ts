@@ -287,6 +287,24 @@ export default class ServerlessOpenapiTypeScript {
         );
     }
 
+    // Post-process the schema to replace const with enum
+    constToEnum(schema) {
+        if (typeof schema === "object" && schema !== null) {
+            const newSchema = JSON.parse(JSON.stringify(schema));
+            if (newSchema.hasOwnProperty("const")) {
+                const { const: _, ...rest } = newSchema;
+                return { ...rest, enum: [newSchema.const] };
+            }
+
+            for (const key of Object.keys(newSchema)) {
+                newSchema[key] = this.constToEnum(newSchema[key]);
+            }
+
+            return newSchema;
+        }
+        return schema;
+    }
+
     generateSchema(modelName) {
         this.log(`Generating schema for ${modelName}`);
 
@@ -301,6 +319,8 @@ export default class ServerlessOpenapiTypeScript {
                 topRef: false
             });
 
-        return this.schemaGenerator.createSchema(modelName);
+        const generatedSchema = this.schemaGenerator.createSchema(modelName);
+
+        return this.constToEnum(generatedSchema);
     }
 }
