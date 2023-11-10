@@ -5,6 +5,11 @@ import {createGenerator, SchemaGenerator} from "ts-json-schema-generator";
 import {camelCase, find, get, isArray, isEmpty, kebabCase, mergeWith, set, upperFirst} from "lodash";
 import {ApiGatewayEvent} from "serverless/plugins/aws/package/compile/events/apiGateway/lib/validate";
 import {mapKeysDeep, mapValuesDeep} from 'deepdash/standalone'
+import path from "path";
+import {promisify} from "util";
+import {exec} from 'child_process';
+
+const execAsync = promisify(exec);
 
 interface Options {
     typescriptApiPath?: string;
@@ -208,7 +213,7 @@ export default class ServerlessOpenapiTypeScript {
         }
     }
 
-    postProcessOpenApi() {
+    async postProcessOpenApi() {
         // @ts-ignore
         const outputFile = this.serverless.processedInput.options.output || 'openapi.json';
         const openApi = yaml.load(fs.readFileSync(outputFile));
@@ -216,6 +221,21 @@ export default class ServerlessOpenapiTypeScript {
         this.enrichMethodsInfo(openApi);
         const encodedOpenAPI = this.encodeOpenApiToStandard(openApi);
         fs.writeFileSync(outputFile, outputFile.endsWith('json') ? JSON.stringify(encodedOpenAPI, null, 2) : yaml.dump(encodedOpenAPI));
+
+        const s3Bucket = this.serverless.service.custom.documentation?.s3Bucket;
+        if (s3Bucket) {
+            await this.uploadFileToS3UsingCLI(outputFile, s3Bucket);
+        }
+    }
+
+    async uploadFileToS3UsingCLI(filePath: string, bucketName: string) {
+        const s3Path = `s3://${bucketName}/${path.basename(filePath)}`;
+        try {
+            await execAsync(`aws s3 cp "${filePath}" "${s3Path}"`);
+            this.log(`File uploaded successfully to ${s3Path}`);
+        } catch (error) {
+            this.log(`Error uploading file: ${error.message}`);
+        }
     }
 
     // OpenApi spec define ^[a-zA-Z0-9\.\-_]+$ for legal fields - https://spec.openapis.org/oas/v3.1.0#components-object
@@ -292,8 +312,8 @@ export default class ServerlessOpenapiTypeScript {
         if (typeof schema === "object" && schema !== null) {
             const newSchema = JSON.parse(JSON.stringify(schema));
             if (newSchema.hasOwnProperty("const")) {
-                const { const: _, ...rest } = newSchema;
-                return { ...rest, enum: [newSchema.const] };
+                const {const: _, ...rest} = newSchema;
+                return {...rest, enum: [newSchema.const]};
             }
 
             for (const key of Object.keys(newSchema)) {
