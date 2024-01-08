@@ -1,10 +1,15 @@
 import type Serverless from "serverless";
 import fs from "fs";
 import yaml from "js-yaml";
-import {SchemaGenerator, createGenerator} from "ts-json-schema-generator";
-import {upperFirst, camelCase, mergeWith, set, isArray, get, isEmpty, kebabCase, find} from "lodash" ;
+import {createGenerator, SchemaGenerator} from "ts-json-schema-generator";
+import {camelCase, find, get, isArray, isEmpty, kebabCase, mergeWith, set, upperFirst} from "lodash";
 import {ApiGatewayEvent} from "serverless/plugins/aws/package/compile/events/apiGateway/lib/validate";
-import { mapKeysDeep, mapValuesDeep} from 'deepdash/standalone'
+import {mapKeysDeep, mapValuesDeep} from 'deepdash/standalone'
+import path from "path";
+import {promisify} from "util";
+import {exec} from 'child_process';
+
+const execAsync = promisify(exec);
 
 interface Options {
     typescriptApiPath?: string;
@@ -19,7 +24,7 @@ type HttpEvent = ApiGatewayEvent['http'] & {
 export default class ServerlessOpenapiTypeScript {
     private readonly functionsMissingDocumentation: string[];
     private readonly disable: boolean;
-    private hooks: { [hook: string]: () => {}};
+    private hooks: { [hook: string]: () => {} };
     private typescriptApiModelPath: string;
     private tsconfigPath: string;
     private schemaGenerator: SchemaGenerator;
@@ -40,6 +45,7 @@ export default class ServerlessOpenapiTypeScript {
 
         if (!this.disable) {
             this.hooks = {
+                'before:package:createDeploymentArtifacts': this.callOpenApiGenerate.bind(this),
                 'before:openapi:generate:serverless': this.populateServerlessWithModels.bind(this),
                 'after:openapi:generate:serverless': this.postProcessOpenApi.bind(this)
             };
@@ -48,8 +54,8 @@ export default class ServerlessOpenapiTypeScript {
 
     initOptions(options) {
         this.options = options || {};
-        this.typescriptApiModelPath = this.options.typescriptApiPath || 'api.d.ts';
-        this.tsconfigPath = this.options.tsconfigPath || 'tsconfig.json';
+        this.typescriptApiModelPath = this.options.typescriptApiPath || this.serverless.service.custom?.documentation?.typescriptApiPath || 'api.d.ts';
+        this.tsconfigPath = this.options.tsconfigPath || this.serverless.service.custom?.documentation?.tsconfigPath || 'tsconfig.json';
     }
 
     assertPluginOrder() {
@@ -82,9 +88,9 @@ export default class ServerlessOpenapiTypeScript {
                         const paths = get(httpEvent, 'request.parameters.paths', []);
                         const querystrings = get(httpEvent, 'request.parameters.querystrings', {});
                         [
-                            { params: paths, documentationKey: 'pathParams' },
-                            { params: querystrings, documentationKey: 'queryParams' }
-                        ].forEach(({ params, documentationKey }) => {
+                            {params: paths, documentationKey: 'pathParams'},
+                            {params: querystrings, documentationKey: 'queryParams'}
+                        ].forEach(({params, documentationKey}) => {
                             this.setDefaultParamsDocumentation(params, httpEvent, documentationKey);
                         });
                     } else if (httpEvent.documentation !== null && !httpEvent.private) {
@@ -95,6 +101,10 @@ export default class ServerlessOpenapiTypeScript {
         });
 
         this.assertAllFunctionsDocumented();
+    }
+
+    private callOpenApiGenerate() {
+        this.serverless.pluginManager.spawn('openapi:generate');
     }
 
     assertAllFunctionsDocumented() {
@@ -126,7 +136,7 @@ export default class ServerlessOpenapiTypeScript {
             const paramDocumentationFromSls = {
                 name,
                 required,
-                schema: { type: 'string' }
+                schema: {type: 'string'}
             };
 
             if (!existingDocumentedParam) {
@@ -139,12 +149,15 @@ export default class ServerlessOpenapiTypeScript {
     }
 
     setModels(httpEvent, functionName) {
+        const formatName = (model: string): string => upperFirst(camelCase(model.replace(/\W+/g, '')));
+
         const definitionPrefix = `${this.serverless.service.custom.documentation.apiNamespace}.${upperFirst(camelCase(functionName))}`;
         const method = httpEvent.method.toLowerCase();
         switch (method) {
             case 'delete':
-                set(httpEvent, 'documentation.methodResponses', [{ statusCode: 204,
-                    responseBody: { description: "Mocked response for the delete endpoint."},
+                set(httpEvent, 'documentation.methodResponses', [{
+                    statusCode: 204,
+                    responseBody: {description: "Mocked response for the delete endpoint."},
                     responseModels:
                         {
                             'application/json': {
@@ -161,18 +174,27 @@ export default class ServerlessOpenapiTypeScript {
             case 'put':
             case 'post':
                 const requestModelName = `${definitionPrefix}.Request.Body`;
-                this.setModel(`${definitionPrefix}.Request.Body`);
-                set(httpEvent, 'documentation.requestModels', { 'application/json': requestModelName });
-                set(httpEvent, 'documentation.requestBody', { description: '' });
+                this.setModel(requestModelName);
+                set(httpEvent, 'documentation.requestModels', {'application/json': requestModelName});
+                set(httpEvent, 'documentation.requestBody', {description: ''});
+
+                // Set Request schema validators
+                set(httpEvent, 'request.schemas', {
+                    'application/json': {
+                        name: formatName(requestModelName),
+                        schema: this.generateSchema(requestModelName),
+                        description: `Generated schema for ${requestModelName}`
+                    }
+                });
             // no-break;
             case 'get':
                 const responseModelName = `${definitionPrefix}.Response`;
-                this.setModel(`${definitionPrefix}.Response`);
+                this.setModel(responseModelName);
                 set(httpEvent, 'documentation.methodResponses', [
                     {
                         statusCode: 200,
-                        responseBody: { description: '' },
-                        responseModels: { 'application/json': responseModelName }
+                        responseBody: {description: ''},
+                        responseModels: {'application/json': responseModelName}
                     }
                 ]);
         }
@@ -191,14 +213,29 @@ export default class ServerlessOpenapiTypeScript {
         }
     }
 
-    postProcessOpenApi() {
+    async postProcessOpenApi() {
         // @ts-ignore
-        const outputFile = this.serverless.processedInput.options.output;
+        const outputFile = this.serverless.processedInput.options.output || 'openapi.json';
         const openApi = yaml.load(fs.readFileSync(outputFile));
         this.patchOpenApiVersion(openApi);
         this.enrichMethodsInfo(openApi);
         const encodedOpenAPI = this.encodeOpenApiToStandard(openApi);
         fs.writeFileSync(outputFile, outputFile.endsWith('json') ? JSON.stringify(encodedOpenAPI, null, 2) : yaml.dump(encodedOpenAPI));
+
+        const s3Bucket = this.serverless.service.custom.documentation?.s3Bucket;
+        if (s3Bucket) {
+            await this.uploadFileToS3UsingCLI(outputFile, s3Bucket);
+        }
+    }
+
+    async uploadFileToS3UsingCLI(filePath: string, bucketName: string) {
+        const s3Path = `s3://${bucketName}/${path.basename(filePath)}`;
+        try {
+            await execAsync(`aws s3 cp "${filePath}" "${s3Path}"`);
+            this.log(`File uploaded successfully to ${s3Path}`);
+        } catch (error) {
+            this.log(`Error uploading file: ${error.message}`);
+        }
     }
 
     // OpenApi spec define ^[a-zA-Z0-9\.\-_]+$ for legal fields - https://spec.openapis.org/oas/v3.1.0#components-object
@@ -259,7 +296,7 @@ export default class ServerlessOpenapiTypeScript {
             this.serverless.service.custom,
             {
                 documentation: {
-                    models: [{ name: modelName, contentType: 'application/json', schema: this.generateSchema(modelName) }]
+                    models: [{name: modelName, contentType: 'application/json', schema: this.generateSchema(modelName)}]
                 }
             },
             (objValue, srcValue) => {
@@ -268,6 +305,24 @@ export default class ServerlessOpenapiTypeScript {
                 }
             }
         );
+    }
+
+    // Post-process the schema to replace const with enum
+    constToEnum(schema) {
+        if (typeof schema === "object" && schema !== null) {
+            const newSchema = JSON.parse(JSON.stringify(schema));
+            if (newSchema.hasOwnProperty("const")) {
+                const {const: _, ...rest} = newSchema;
+                return {...rest, enum: [newSchema.const]};
+            }
+
+            for (const key of Object.keys(newSchema)) {
+                newSchema[key] = this.constToEnum(newSchema[key]);
+            }
+
+            return newSchema;
+        }
+        return schema;
     }
 
     generateSchema(modelName) {
@@ -284,6 +339,8 @@ export default class ServerlessOpenapiTypeScript {
                 topRef: false
             });
 
-        return this.schemaGenerator.createSchema(modelName);
+        const generatedSchema = this.schemaGenerator.createSchema(modelName);
+
+        return this.constToEnum(generatedSchema);
     }
 }
