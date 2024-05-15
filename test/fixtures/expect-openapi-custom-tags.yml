@@ -61,6 +61,7 @@ paths:
                 $ref: '#/components/schemas/ProjectApi.GetFunc.Response'
       tags:
         - BazTitle
+webhooks: {}
 tags:
   - name: Project
     description: DummyDescription

@@ -37,7 +37,7 @@ components:
           type: string
         generic:
           $ref: >-
-            #/components/schemas/ProjectApi.GenericType_structure-1448918441-633-661-1448918441-620-662-1448918441-599-663-1448918441-547-673-1448918441-515-674-1448918441-283-680-1448918441-250-680-1448918441-104-1213-1448918441-75-1213-1448918441-0-1214_
+            #/components/schemas/ProjectApi.GenericType_structure-1448918441-658-687-1448918441-645-688-1448918441-630-689-1448918441-590-695-1448918441-562-696-1448918441-382-700-1448918441-352-700-1448918441-100-1129-1448918441-71-1129-1448918441-0-1130_
       required:
         - id
         - uuid
@@ -70,7 +70,18 @@ components:
       required:
         - data
       additionalProperties: false
-    ProjectApi.GenericType_structure-1448918441-633-661-1448918441-620-662-1448918441-599-663-1448918441-547-673-1448918441-515-674-1448918441-283-680-1448918441-250-680-1448918441-104-1213-1448918441-75-1213-1448918441-0-1214_:
+    ProjectApi.Webhooks.OnCreateWebhook:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+      additionalProperties: false
+    ProjectApi.GenericType_structure-1448918441-658-687-1448918441-645-688-1448918441-630-689-1448918441-590-695-1448918441-562-696-1448918441-382-700-1448918441-352-700-1448918441-100-1129-1448918441-71-1129-1448918441-0-1130_:
       type: array
       items:
         type: object
@@ -83,6 +94,7 @@ components:
           - key
           - name
         additionalProperties: false
+
 info:
   title: Project
   description: >
@@ -220,6 +232,21 @@ paths:
                 $ref: '#/components/schemas/ProjectApi.GetFunc.Response'
       tags:
         - Project
+webhooks:
+  OnCreateWebhook:
+    post:
+      requestBody:
+        description: |
+          This is a request body description
+        content:
+          application/json:
+            schema:
+              $ref: >-
+                #/components/schemas/ProjectApi.Webhooks.OnCreateWebhook
+      response:
+        '200':
+          description: |
+            This is a expected response description
 tags:
   - name: Project
     description: >

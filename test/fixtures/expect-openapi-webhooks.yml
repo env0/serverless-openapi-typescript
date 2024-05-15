@@ -1,0 +1,40 @@
+openapi: 3.1.0
+components:
+  schemas:
+    ProjectApi.Webhooks.OnCreateWebhook:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+      additionalProperties: false
+info:
+  title: Project
+  description: DummyDescription
+paths: { }
+webhooks:
+  OnCreateWebhook:
+    post:
+      requestBody:
+        description: |
+          This is a request body description
+        content:
+          application/json:
+            schema:
+              $ref: >-
+                #/components/schemas/ProjectApi.Webhooks.OnCreateWebhook
+      responses:
+        '200':
+          description: |
+            This is a expected response description
+tags:
+  - name: Project
+    description: DummyDescription
+  - name: FooBarTitle
+    description: FooBarDescription
+  - name: BazTitle
+    description: BazDescription
