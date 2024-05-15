@@ -20,6 +20,16 @@ custom:
 
       More on https://google.com
     apiNamespace: ProjectApi
+    webhooks:
+      OnCreateWebhook:
+        post:
+          requestBody:
+            description: |
+              This is a request body description
+          responses:
+            200:
+              description: |
+                This is a expected response description
 
 functions:
   createFunc:

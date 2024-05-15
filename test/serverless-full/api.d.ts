@@ -8,7 +8,12 @@ export namespace ProjectApi {
     export type Number = number
     export type String = string;
     export type GenericType<T> = T[];
-
+    export namespace Webhooks {
+      export type OnCreateWebhook = {
+        id: string;
+        name: string;
+      }
+    }
     export namespace CreateFunc {
         export namespace Request {
             export type Body = {

@@ -23,6 +23,7 @@ export default class ServerlessOpenapiTypeScript {
     private typescriptApiModelPath: string;
     private tsconfigPath: string;
     private schemaGenerator: SchemaGenerator;
+    private webhookEntries: Record<string, any> = {};
 
     constructor(private serverless: Serverless, private options: Options) {
         this.assertPluginOrder();
@@ -64,6 +65,10 @@ export default class ServerlessOpenapiTypeScript {
         return this.serverless.service.functions || {};
     }
 
+    get webhooks() {
+      return this.serverless.service.custom.documentation.webhooks || {};
+    }
+
     log(msg) {
         this.serverless.cli.log(`[serverless-openapi-typescript] ${msg}`);
     }
@@ -77,7 +82,7 @@ export default class ServerlessOpenapiTypeScript {
                     if (httpEvent.documentation) {
                         this.log(`Generating docs for ${functionName}`);
 
-                        this.setModels(httpEvent, functionName);
+                        this.setHttpMethodModels(httpEvent, functionName);
 
                         const paths = get(httpEvent, 'request.parameters.paths', []);
                         const querystrings = get(httpEvent, 'request.parameters.querystrings', {});
@@ -92,6 +97,16 @@ export default class ServerlessOpenapiTypeScript {
                     }
                 }
             });
+        });
+
+        this.log('Scanning webhooks for documentation attribute');
+        Object.keys(this.webhooks).forEach(webhookName => {
+          const webhook = this.webhooks[webhookName];
+          const methodDefinition = webhook['post'];
+          if (methodDefinition) {
+            this.setWebhookModels(methodDefinition, webhookName);
+            this.log(`Generating docs for webhook ${webhookName}`);
+          }
         });
 
         this.assertAllFunctionsDocumented();
@@ -138,7 +153,7 @@ export default class ServerlessOpenapiTypeScript {
         });
     }
 
-    setModels(httpEvent, functionName) {
+    setHttpMethodModels(httpEvent, functionName) {
         const definitionPrefix = `${this.serverless.service.custom.documentation.apiNamespace}.${upperFirst(camelCase(functionName))}`;
         const method = httpEvent.method.toLowerCase();
         switch (method) {
@@ -179,10 +194,21 @@ export default class ServerlessOpenapiTypeScript {
         }
     }
 
+    setWebhookModels(webhook, webhookName: string) {
+      const webhookModelName = `${this.serverless.service.custom.documentation.apiNamespace}.Webhooks.${upperFirst(camelCase(webhookName))}`;
+      this.setModel(webhookModelName);
+      this.webhookEntries[webhookName] = {
+        post: webhook
+      };
+      // Since the original plugin doesn't read `webhooks` property and handle it we need to help it
+      set(this.webhookEntries[webhookName], 'post.requestBody.content', { 'application/json': { schema: { '$ref': `#/components/schemas/${webhookModelName}` } } });
+    }
+
     postProcessOpenApi() {
         // @ts-ignore
         const outputFile = this.serverless.processedInput.options.output;
         const openApi = yaml.load(fs.readFileSync(outputFile));
+        openApi['webhooks'] = this.webhookEntries;
         this.patchOpenApiVersion(openApi);
         this.enrichMethodsInfo(openApi);
         const encodedOpenAPI = this.encodeOpenApiToStandard(openApi);

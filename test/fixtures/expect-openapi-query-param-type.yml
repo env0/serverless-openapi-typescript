@@ -48,6 +48,7 @@ paths:
                 $ref: '#/components/schemas/ProjectApi.Func.Response'
       tags:
         - Project
+webhooks: {}
 tags:
   - name: Project
     description: DummyDescription
