@@ -26,7 +26,7 @@ custom:
           requestBody:
             description: |
               This is a request body description
-          response:
+          responses:
             200:
               description: |
                 This is a expected response description

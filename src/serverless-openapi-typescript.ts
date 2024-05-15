@@ -208,6 +208,7 @@ export default class ServerlessOpenapiTypeScript {
         // @ts-ignore
         const outputFile = this.serverless.processedInput.options.output;
         const openApi = yaml.load(fs.readFileSync(outputFile));
+        openApi['webhooks'] = this.webhookEntries;
         this.patchOpenApiVersion(openApi);
         this.enrichMethodsInfo(openApi);
         const encodedOpenAPI = this.encodeOpenApiToStandard(openApi);
