@@ -498,6 +498,26 @@ export namespace MyApi {
 }
 ```
 
+You can also add Webhook tags by using `webhookTags` keyword it will auto add tag to all webhooks
+```yaml
+custom:
+  documentation:
+    apiNamespace: MyApi
+    webhookTags:
+      - name: ProjectWebhooks
+        description: This is the description for ProjectWebhooks
+    webhooks:
+      WebhookName:
+        post:
+          requestBody:
+            description: |
+              This is a request body description
+          responses:
+            200:
+              description: |
+                This is a expected response description
+```
+
 
 ## Install
 

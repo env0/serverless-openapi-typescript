@@ -69,6 +69,10 @@ export default class ServerlessOpenapiTypeScript {
       return this.serverless.service.custom.documentation.webhooks || {};
     }
 
+    get webhookTags() {
+      return (this.serverless.service.custom.documentation.webhookTags || []).map(tag => tag.name);
+    }
+
     log(msg) {
         this.serverless.cli.log(`[serverless-openapi-typescript] ${msg}`);
     }
@@ -104,6 +108,7 @@ export default class ServerlessOpenapiTypeScript {
           const webhook = this.webhooks[webhookName];
           const methodDefinition = webhook['post'];
           if (methodDefinition) {
+            methodDefinition.tags = this.webhookTags;
             this.setWebhookModels(methodDefinition, webhookName);
             this.log(`Generating docs for webhook ${webhookName}`);
           }
