@@ -1,0 +1,26 @@
+service: serverless-openapi-typescript-demo
+provider:
+  name: aws
+
+plugins:
+  - ../node_modules/@conqa/serverless-openapi-documentation
+  - ../src/index
+
+custom:
+  documentation:
+    title: 'ProjectApi'
+    description: DummyDescription
+    apiNamespace: ProjectApi
+    webhookTags:
+      - name: ProjectWebhooks
+        description: This is the description for ProjectWebhooks
+    webhooks:
+      OnCreateWebhook:
+        post:
+          requestBody:
+            description: |
+              This is a request body description
+          responses:
+            200:
+              description: |
+                This is a expected response description

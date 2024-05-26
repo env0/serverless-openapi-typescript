@@ -17,6 +17,7 @@ describe('ServerlessOpenapiTypeScript', () => {
     ${'Hyphenated Functions'}  | ${'hyphenated-functions'}
     ${'Full Project'} | ${'full'}
     ${'Webhooks'} | ${'webhooks'}
+    ${'Webhooks Tags'} | ${'webhooks-custom-tags'}
     `('when using $testCase', ({projectName}) => {
 
         beforeEach(async () => {
