@@ -247,6 +247,7 @@ webhooks:
         '200':
           description: |
             This is a expected response description
+      tags: []
 tags:
   - name: Project
     description: >
